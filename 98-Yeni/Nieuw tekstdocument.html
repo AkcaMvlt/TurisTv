@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mobielvriendelijke beschrijving</title>
+  <style>
+    body {
+      margin:0;
+      font-family: Arial, sans-serif;
+      background:#111;
+      color:#fff;
+    }
+    .card {
+      background:#1c1c1c;
+      margin:12px;
+      border-radius:12px;
+      padding:12px;
+    }
+    .card-header {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      cursor:pointer;
+    }
+    .card-header h2 {
+      margin:0;
+      font-size:18px;
+    }
+    .toggle-btn {
+      background:none;
+      border:0;
+      color:#bbb;
+      font-size:20px;
+    }
+    .desc {
+      margin-top:10px;
+      font-size:14px;
+      color:#bbb;
+      display:none;
+    }
+    @media (max-width:600px){
+      .card {margin:8px; padding:10px;}
+      .card-header h2 {font-size:16px;}
+      .desc {font-size:13px;}
+    }
+  </style>
+</head>
+<body>
+
+  <section class="card">
+    <div class="card-header" onclick="toggleDesc()">
+      <h2>Beschrijving</h2>
+      <button class="toggle-btn" id="arrow">▼</button>
+    </div>
+    <div class="desc" id="desc">
+      Gebruik de kanaalknop ☰ of voeg eigen m3u8/YouTube links toe. 
+      Touch-vriendelijk. Draai je telefoon voor grotere weergave.
+    </div>
+  </section>
+
+  <script>
+    function toggleDesc(){
+      const desc = document.getElementById('desc');
+      const arrow = document.getElementById('arrow');
+      const open = desc.style.display === 'block';
+      desc.style.display = open ? 'none' : 'block';
+      arrow.textContent = open ? '▼' : '▲';
+    }
+  </script>
+
+</body>
+</html>

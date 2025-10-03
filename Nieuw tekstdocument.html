@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live-Demonstratie</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .code-block {
+      font-family: monospace;
+      font-size: 11px;
+      padding: 6px;
+      border-radius: 4px;
+      max-height: 120px;
+      overflow: auto;
+    }
+    .bg-gradient {
+      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient">
+  <!-- Header -->
+  <header class="p-4 text-center md:text-left">
+    <h1 class="text-2xl md:text-3xl font-bold text-white">Live-Demonstratie</h1>
+    <div class="w-16 md:w-20 h-1 bg-white mt-1 mx-auto md:mx-0"></div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="grid grid-cols-1 md:grid-cols-12 gap-4 px-4 pb-20">
+    <!-- Left Column -->
+    <div class="md:col-span-7">
+      <div class="bg-white/90 backdrop-blur-sm p-4 rounded-lg shadow-lg">
+        <h2 class="text-lg font-semibold mb-3 text-gray-700">Afbeelding Bewerken</h2>
+
+        <!-- Upload en Preview -->
+        <div class="flex flex-col sm:flex-row sm:space-x-4 mb-4">
+          <label class="flex flex-col items-center justify-center w-full sm:w-28 h-28 bg-blue-500 text-white rounded cursor-pointer hover:bg-blue-600 transition-colors mb-3 sm:mb-0">
+            <i class="fas fa-upload text-2xl mb-1"></i>
+            <span class="text-xs text-center">Afbeelding uploaden</span>
+            <input type="file" id="image-upload" class="hidden" accept="image/*"/>
+          </label>
+
+          <div class="flex-grow relative flex items-center justify-center bg-gray-200 rounded-lg h-40 sm:h-28">
+            <img id="preview-image" alt="Transparante afbeelding" class="max-h-full max-w-full object-contain" />
+            <div id="image-placeholder" class="absolute inset-0 flex items-center justify-center">
+              <span class="text-xs text-gray-500">Upload afbeelding</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
+          <div class="filter-control">
+            <span class="text-xs font-bold">Kleurtoon:</span>
+            <input class="w-full" id="hue" type="range" min="0" max="360" value="0" />
+          </div>
+          <div class="filter-control">
+            <span class="text-xs font-bold">Verzadiging:</span>
+            <input class="w-full" id="saturate" type="range" min="0" max="200" value="100" />
+          </div>
+          <!-- extra filters idem -->
+        </div>
+
+        <!-- Download knop -->
+        <button id="download-button" class="w-full py-2 px-4 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition-colors">
+          <i class="fas fa-download mr-1"></i> Download bewerkte afbeelding
+        </button>
+      </div>
+    </div>
+
+    <!-- Right Column -->
+    <div class="md:col-span-5">
+      <div class="bg-white/90 backdrop-blur-sm p-4 rounded-lg shadow-lg flex flex-col h-full">
+        <h2 class="text-lg font-semibold mb-2 text-gray-700">HTML Voorbeeld</h2>
+        <pre class="code-block bg-gray-100 text-gray-700 flex-grow">
+&lt;!-- Responsive HTML voorbeeld --&gt;
+&lt;div class="image-editor"&gt;
+  &lt;input type="file" id="image-upload" accept="image/*"/&gt;
+  &lt;img id="preview-image" /&gt;
+  &lt;input type="range" id="hue" min="0" max="360" /&gt;
+&lt;/div&gt;
+        </pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="fixed bottom-2 right-4 text-xs text-white">
+    <p>Responsive Demo</p>
+  </footer>
+
+  <script>
+    document.getElementById('image-upload').addEventListener('change', e => {
+      const file = e.target.files[0];
+      if(file){
+        const reader = new FileReader();
+        reader.onload = ev => {
+          document.getElementById('preview-image').src = ev.target.result;
+          document.getElementById('image-placeholder').style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  </script>
+</body>
+</html>

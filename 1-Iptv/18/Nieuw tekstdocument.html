@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>IPTV — Turkey (voorbeeld)</title>
+  <style>
+    :root{
+      --bg:#0f1724; --card:#0b1220; --muted:#9aa4b2; --accent:#06b6d4;
+      --gap:12px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    body{
+      margin:0; padding:24px; background:linear-gradient(180deg,#071025 0%, #081627 100%); color:#e6eef6;
+    }
+    header{ display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:18px; }
+    h1{ margin:0; font-size:28px; letter-spacing: -0.5px; }
+    .container{ display:grid; grid-template-columns: 280px 1fr; gap:20px; }
+    nav{ background:var(--card); padding:14px; border-radius:12px; min-height:320px; }
+    nav h2{ margin:0 0 10px 0; font-size:14px; color:var(--accent); }
+    .category{ margin-bottom:12px; }
+    .category b{ display:block; margin-bottom:8px; color:var(--muted); font-size:13px; }
+    .channel-list{ display:flex; flex-wrap:wrap; gap:8px; }
+    .chip{
+      background:rgba(255,255,255,0.03);
+      padding:8px 10px; border-radius:999px; font-size:13px;
+      text-decoration:none; color:inherit; display:inline-flex; align-items:center; gap:8px;
+      border:1px solid rgba(255,255,255,0.03);
+    }
+    main{ background:transparent; }
+    .card{ background:rgba(255,255,255,0.03); padding:16px; border-radius:12px; margin-bottom:12px; }
+    .legend{ color:var(--muted); font-size:13px; margin-top:6px; }
+    footer{ margin-top:18px; color:var(--muted); font-size:13px; }
+    @media (max-width:880px){
+      .container{ grid-template-columns: 1fr; }
+      nav{ order:2; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Turkey — IPTV (voorbeeld)</h1>
+    <div class="legend">Gecategoriseerde kanalen — geïllustreerd</div>
+  </header>
+
+  <div class="container">
+    <!-- linkerkolom: categorie-navigatie -->
+    <nav aria-label="Categorieën">
+      <h2>Categorieën</h2>
+
+      <div class="category">
+        <b>news</b>
+        <div class="channel-list">
+          <a class="chip" href="#" title="24 TV">24 TV</a>
+          <a class="chip" href="#" title="360">360</a>
+          <a class="chip" href="#" title="A Haber">A Haber</a>
+          <a class="chip" href="#" title="Haberturk TV">Haberturk TV</a>
+          <a class="chip" href="#" title="TRT World">TRT World</a>
+        </div>
+      </div>
+
+      <div class="category">
+        <b>sports</b>
+        <div class="channel-list">
+          <a class="chip" href="#" title="A Spor">A Spor</a>
+          <a class="chip" href="#" title="beIN Sports Haber">beIN Sports Haber</a>
+          <a class="chip" href="#" title="GS TV">GS TV</a>
+          <a class="chip" href="#" title="TRT Spor">TRT Spor</a>
+        </div>
+      </div>
+
+      <div class="category">
+        <b>music</b>
+        <div class="channel-list">
+          <a class="chip" href="#" title="Kral Pop TV">Kral Pop TV</a>
+          <a class="chip" href="#" title="Kral TV">Kral TV</a>
+          <a class="chip" href="#" title="PowerTurk">PowerTurk</a>
+          <a class="chip" href="#" title="Number 1">Number 1</a>
+        </div>
+      </div>
+
+      <div class="category">
+        <b>kids</b>
+        <div class="channel-list">
+          <a class="chip" href="#" title="Minika Cocuk">Minika Çocuk</a>
+          <a class="chip" href="#" title="TRT Cocuk">TRT Çocuk</a>
+        </div>
+      </div>
+
+      <div class="category">
+        <b>documentary / culture</b>
+        <div class="channel-list">
+          <a class="chip" href="#" title="GZT">GZT</a>
+          <a class="chip" href="#" title="Luys TV">Luys TV</a>
+        </div>
+      </div>
+
+    </nav>
+
+    <!-- rechterkolom: content / details -->
+    <main>
+      <section class="card">
+        <h3>Overzicht — Turkey</h3>
+        <p>Dit is een vereenvoudigde HTML-weergave van de pagina "Turkey" op iptv-web.app. De originele pagina bevat veel meer kanalen en categorieën — bovenstaand voorbeeld toont de meest voorkomende categorieën en een selectie van kanaalnamen.</p>
+        <p class="legend">Tip: vervang de <code>href="#"</code>-links met de echte stream-URL's of interne kanaal-URL's om live te maken.</p>
+      </section>
+
+      <section class="card">
+        <h3>Voorbeeld: kanaalkaart</h3>
+        <p><strong>ATV</strong> — algemeen / entertainment</p>
+        <p>Voor gebruik in een IPTV-app kun je elke <em>chip</em> vervangen door een link naar het m3u8 / player endpoint, bijvoorbeeld:</p>
+
+        <pre style="background:#02111b;padding:10px;border-radius:8px;color:#bfe7ff;overflow:auto;">
+&lt;a class="chip" href="https://stream.example.com/atv/playlist.m3u8"&gt;ATV&lt;/a&gt;
+        </pre>
+
+        <p class="legend">Opmerking: vervang <code>https://stream.example.com/...</code> door de daadwerkelijke streamlink.</p>
+      </section>
+
+      <section class="card">
+        <h3>Hoe gebruik je deze HTML?</h3>
+        <ol>
+          <li>Sla het bestand op als <code>index.html</code>.</li>
+          <li>Open het in je browser (dubbelklik of via local server).</li>
+          <li>Voor echte streams: zet echte <code>href</code>-URLs naar m3u8 of naar een interne player pagina.</li>
+        </ol>
+      </section>
+
+      <footer>
+        Gemaakt als voorbeeld op basis van de site-inhoud. Bronpagina bekeken: iptv-web.app/TR. :contentReference[oaicite:1]{index=1}
+      </footer>
+    </main>
+  </div>
+</body>
+</html>

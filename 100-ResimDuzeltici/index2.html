@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Upload foto — transparant maken & downloaden</title>
+  <style>
+    /* Mooie, rustige pagina-achtergrond */
+    :root{
+      --card-bg: rgba(255,255,255,0.85);
+      --accent: #6c63ff;
+    }
+    html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial}
+    body{
+      background: radial-gradient(1200px 400px at 10% 10%, rgba(108,99,255,0.12), transparent 10%),
+                  radial-gradient(1200px 400px at 90% 90%, rgba(99,255,207,0.06), transparent 10%),
+                  linear-gradient(180deg,#0f172a 0%, #071130 60%);
+      color: #0b1020;
+      display:flex;align-items:center;justify-content:center;padding:40px;box-sizing:border-box;
+    }
+
+    .container{
+      width:100%;max-width:980px;background:var(--card-bg);border-radius:14px;padding:22px;box-shadow:0 10px 30px rgba(2,6,23,0.45);
+      backdrop-filter: blur(6px);
+      display:grid;grid-template-columns:360px 1fr;gap:18px;align-items:start;
+    }
+
+    h1{margin:0 0 10px 0;font-size:20px;color:#0b1020}
+    p.small{margin:0 0 14px 0;color:#1f2937;opacity:0.75;font-size:13px}
+
+    /* linkerkolom controls */
+    .controls{display:flex;flex-direction:column;gap:10px}
+    label{font-size:13px;color:#0b1020}
+    .file-row{display:flex;gap:8px;align-items:center}
+    input[type=file]{flex:1}
+
+    .control-row{display:flex;gap:8px;align-items:center}
+    .range{width:100%}
+
+    button{background:var(--accent);color:white;border:0;padding:10px 12px;border-radius:8px;cursor:pointer;font-weight:600}
+    button.ghost{background:transparent;color:var(--accent);border:1px solid rgba(108,99,255,0.2)}
+
+    /* preview column */
+    .preview-wrap{display:flex;flex-direction:column;gap:12px;align-items:center}
+    .canvas-holder{width:100%;min-height:320px;display:flex;align-items:center;justify-content:center;border-radius:10px;padding:18px;background:linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.3));position:relative;}
+
+    /* checkerboard background to show transparency */
+    .checker{
+      position:absolute;inset:18px;border-radius:8px;pointer-events:none;background-image:linear-gradient(45deg, #dbeafe 25%, transparent 25%),linear-gradient(-45deg, #dbeafe 25%, transparent 25%),linear-gradient(45deg, transparent 75%, #dbeafe 75%),linear-gradient(-45deg, transparent 75%, #dbeafe 75%);
+      background-size:18px 18px; background-position:0 0, 0 9px, 9px -9px, -9px 0px;opacity:0.6;
+    }
+
+    canvas{max-width:100%;height:auto;border-radius:6px;box-shadow:0 8px 20px rgba(2,6,23,0.12)}
+
+    .meta{font-size:13px;color:#0b1020;opacity:0.85}
+
+    footer{grid-column:1/-1;margin-top:6px;text-align:right;font-size:12px;color:#0b1020;opacity:0.7}
+
+    @media (max-width:900px){
+      .container{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+  <div class="container" role="main">
+    <div>
+      <h1>Upload & maak transparant</h1>
+      <p class="small">Laad een foto, stel de transparantie (opacity) in en klik op <strong>Download PNG</strong> om een afbeelding met transparante achtergrond te bewaren.</p>
+
+      <div class="controls" aria-hidden="false">
+        <div class="file-row">
+          <input id="file" type="file" accept="image/*" aria-label="Upload foto" />
+          <button id="reset" class="ghost">Reset</button>
+        </div>
+
+        <div>
+          <label for="opacity">Transparantie (0 = onzichtbaar, 1 = vol): <span id="opacityVal">1.00</span></label>
+          <div class="control-row">
+            <input id="opacity" class="range" type="range" min="0" max="1" step="0.01" value="1" />
+          </div>
+        </div>
+
+        <div>
+          <label for="scale">Schaal (zoom): <span id="scaleVal">100%</span></label>
+          <input id="scale" class="range" type="range" min="10" max="200" step="1" value="100" />
+        </div>
+
+        <div>
+          <label>
+            <input id="showChecker" type="checkbox" checked /> Toon achtergrond checkerboard (zichtbaar in preview, niet in PNG)
+          </label>
+        </div>
+
+        <div style="display:flex;gap:8px;margin-top:6px">
+          <button id="download" disabled>Download PNG</button>
+          <button id="download-jpg" class="ghost" disabled>Download JPG (geen transparantie)</button>
+        </div>
+
+        <p class="small" style="margin-top:8px">Tip: PNG ondersteunt transparantie. Als je JPG kiest, wordt de transparante achtergrond wit.</p>
+      </div>
+
+    </div>
+
+    <div class="preview-wrap">
+      <div class="canvas-holder" id="holder">
+        <div class="checker" id="checker"></div>
+        <canvas id="canvas" width="600" height="400" aria-label="Voorbeeld van geüploade afbeelding"></canvas>
+      </div>
+      <div class="meta">Afmetingen afbeelding: <span id="dims">—</span></div>
+      <footer>Made with ❤️ — sleep een nieuw bestand om te vervangen</footer>
+    </div>
+  </div>
+
+  <script>
+    // Simpel, zelfstaand script
+    const fileInput = document.getElementById('file');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const opacityRange = document.getElementById('opacity');
+    const opacityVal = document.getElementById('opacityVal');
+    const downloadBtn = document.getElementById('download');
+    const downloadJpg = document.getElementById('download-jpg');
+    const resetBtn = document.getElementById('reset');
+    const checker = document.getElementById('checker');
+    const showChecker = document.getElementById('showChecker');
+    const dims = document.getElementById('dims');
+    const scaleRange = document.getElementById('scale');
+    const scaleVal = document.getElementById('scaleVal');
+
+    let img = new Image();
+    let imgLoaded = false;
+
+    function clearCanvas(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+    }
+
+    function draw(){
+      clearCanvas();
+      if(!imgLoaded) return;
+      // bereken passende schaal zodat afbeelding binnen canvas past
+      const scalePercent = Number(scaleRange.value) / 100;
+      const iw = img.width * scalePercent;
+      const ih = img.height * scalePercent;
+      // center
+      const x = Math.max((canvas.width - iw)/2, 0);
+      const y = Math.max((canvas.height - ih)/2, 0);
+      ctx.save();
+      ctx.globalAlpha = Number(opacityRange.value);
+      ctx.drawImage(img, x, y, iw, ih);
+      ctx.restore();
+
+      dims.textContent = `${Math.round(img.width)} × ${Math.round(img.height)} px (canvas ${canvas.width}×${canvas.height})`;
+      downloadBtn.disabled = false;
+      downloadJpg.disabled = false;
+    }
+
+    // resize canvas to match container width but keep reasonable limits
+    function fitCanvasToHolder(){
+      const holder = document.getElementById('holder');
+      const rect = holder.getBoundingClientRect();
+      const maxWidth = Math.min(900, Math.round(rect.width - 36));
+      const maxHeight = Math.max(320, Math.round(window.innerHeight * 0.4));
+      // keep same aspect ratio if previously set, else default 3:2
+      const aspect = canvas.width / canvas.height || (3/2);
+      canvas.width = maxWidth;
+      canvas.height = Math.round(maxWidth / aspect);
+    }
+
+    window.addEventListener('resize', ()=>{ fitCanvasToHolder(); draw(); });
+    fitCanvasToHolder();
+
+    // File load
+    fileInput.addEventListener('change', (e)=>{
+      const f = e.target.files && e.target.files[0];
+      if(!f) return;
+      const reader = new FileReader();
+      reader.onload = function(ev){
+        img = new Image();
+        img.onload = function(){
+          imgLoaded = true;
+          // set canvas aspect ratio to image aspect for nicer result
+          canvas.width = Math.min(1200, img.width);
+          canvas.height = Math.min(800, Math.round(img.height * (canvas.width / img.width)));
+          draw();
+        }
+        img.src = ev.target.result;
+      }
+      reader.readAsDataURL(f);
+    });
+
+    // drag & drop support
+    const holder = document.getElementById('holder');
+    ['dragenter','dragover'].forEach(ev=>{
+      holder.addEventListener(ev,(e)=>{e.preventDefault();holder.style.outline='2px dashed rgba(108,99,255,0.35)'});
+    });
+    ['dragleave','drop'].forEach(ev=>{
+      holder.addEventListener(ev,(e)=>{e.preventDefault();holder.style.outline='none'});
+    });
+    holder.addEventListener('drop',(e)=>{
+      const f = e.dataTransfer.files && e.dataTransfer.files[0];
+      if(!f) return;
+      fileInput.files = e.dataTransfer.files; // reflect
+      const reader = new FileReader();
+      reader.onload = function(ev){ img = new Image(); img.onload = ()=>{ imgLoaded = true; canvas.width = Math.min(1200, img.width); canvas.height = Math.min(800, Math.round(img.height * (canvas.width / img.width))); draw(); }; img.src = ev.target.result; };
+      reader.readAsDataURL(f);
+    });
+
+    // opacity control
+    opacityRange.addEventListener('input', ()=>{ opacityVal.textContent = Number(opacityRange.value).toFixed(2); draw(); });
+
+    // scale control
+    scaleRange.addEventListener('input', ()=>{ scaleVal.textContent = `${scaleRange.value}%`; draw(); });
+
+    // show checker
+    showChecker.addEventListener('change', ()=>{ checker.style.display = showChecker.checked ? 'block' : 'none'; });
+
+    // reset
+    resetBtn.addEventListener('click', ()=>{
+      fileInput.value = '';
+      img = new Image();
+      imgLoaded = false;
+      clearCanvas();
+      dims.textContent = '—';
+      downloadBtn.disabled = true;
+      downloadJpg.disabled = true;
+    });
+
+    // download as PNG (keep transparency)
+    downloadBtn.addEventListener('click', ()=>{
+      // we must temporarily hide the checker (it's separate element, so canvas is clean)
+      canvas.toBlob(function(blob){
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'image-transparent.png';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      }, 'image/png');
+    });
+
+    // download as JPG (no transparency) — we draw a white background first
+    downloadJpg.addEventListener('click', ()=>{
+      const tmp = document.createElement('canvas');
+      tmp.width = canvas.width; tmp.height = canvas.height;
+      const tctx = tmp.getContext('2d');
+      // white background
+      tctx.fillStyle = '#ffffff';
+      tctx.fillRect(0,0,tmp.width,tmp.height);
+      // draw the image with the same alpha
+      tctx.globalAlpha = Number(opacityRange.value);
+      const scalePercent = Number(scaleRange.value) / 100;
+      const iw = img.width * scalePercent;
+      const ih = img.height * scalePercent;
+      const x = Math.max((tmp.width - iw)/2, 0);
+      const y = Math.max((tmp.height - ih)/2, 0);
+      tctx.drawImage(img, x, y, iw, ih);
+      tmp.toBlob(function(blob){
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = 'image.jpg'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+      }, 'image/jpeg', 0.92);
+    });
+
+    // allow keyboard accessibility: space/enter on buttons
+    Array.from(document.querySelectorAll('button')).forEach(b=>{
+      b.addEventListener('keyup', (e)=>{ if(e.key === 'Enter' || e.key === ' ') b.click(); });
+    });
+
+    // initial: draw empty checker if needed
+    checker.style.display = showChecker.checked ? 'block':'none';
+
+  </script>
+
+  <!--
+    Korte instructies (NL):
+    - Klik of sleep een afbeelding in de linkerbox (of op de canvas).
+    - Gebruik de slider "Transparantie" om de opacity in te stellen.
+    - Gebruik de "Download PNG" knop om een PNG met transparante delen te bewaren.
+    - Gebruik "Download JPG" als je een niet-transparante versie wilt (achtergrond wordt wit).
+
+    Je kunt dit bestand opslaan als *.html en lokaal openen in je browser.
+  -->
+</body>
+</html>

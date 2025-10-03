@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mediaplayer met Categorieën</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(160deg, #1e293b, #0f172a);
+    }
+    /* Scrollbar verbergen voor mooier effect */
+    .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
+    .scrollbar-hide {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="text-white font-sans">
+
+  <!-- Header -->
+  <header class="flex justify-between items-center p-4 bg-gray-900/70 backdrop-blur-md shadow-md sticky top-0 z-40">
+    <h1 class="text-xl font-bold">📺 Mijn Media Player</h1>
+    <button id="menuBtn" class="text-white focus:outline-none">
+      <!-- Hamburger -->
+      <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2"
+           viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round"
+              d="M4 6h16M4 12h16M4 18h16"></path>
+      </svg>
+    </button>
+  </header>
+
+  <!-- Sidebar Playlist -->
+  <aside id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-gray-900/95 backdrop-blur-lg shadow-lg transform -translate-x-full transition-transform duration-300 z-50 overflow-y-auto">
+    <div class="p-4 border-b border-gray-700 flex justify-between items-center">
+      <h2 class="text-lg font-semibold">Alle Kanalen</h2>
+      <button id="closeMenu" class="text-gray-400 hover:text-white">✕</button>
+    </div>
+    <ul id="playlist" class="space-y-2 p-4">
+      <li><button class="channelBtn w-full text-left p-2 hover:bg-gray-700 rounded" data-url="http://online.hdgo.site/player30/playerjs.html?file=stream1">Kanaal 1</button></li>
+      <li><button class="channelBtn w-full text-left p-2 hover:bg-gray-700 rounded" data-url="http://online.hdgo.site/player30/playerjs.html?file=stream2">Kanaal 2</button></li>
+      <li><button class="channelBtn w-full text-left p-2 hover:bg-gray-700 rounded" data-url="http://online.hdgo.site/player30/playerjs.html?file=stream3">Kanaal 3</button></li>
+      <li><button class="channelBtn w-full text-left p-2 hover:bg-gray-700 rounded" data-url="http://online.hdgo.site/player30/playerjs.html?file=stream4">Kanaal 4</button></li>
+    </ul>
+  </aside>
+  <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-40"></div>
+
+  <!-- Main Content -->
+  <main class="p-4 space-y-10">
+
+    <!-- Media Player -->
+    <div id="playerContainer" class="w-full max-w-3xl mx-auto">
+      <iframe id="playerFrame" src="http://online.hdgo.site/player30/playerjs.html?file=stream1"
+              class="w-full h-64 sm:h-96 rounded-2xl shadow-2xl border border-gray-700" frameborder="0" allowfullscreen></iframe>
+    </div>
+
+    <!-- Categorieën met kanalen -->
+    <section class="space-y-8">
+      
+      <!-- Sport -->
+      <div>
+        <h2 class="text-xl font-semibold mb-3">🏆 Sport</h2>
+        <div class="flex flex-col space-y-3">
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 text-left shadow hover:bg-gray-700 transition" data-url="http://online.hdgo.site/player30/playerjs.html?file=sport1">Sport Kanaal 1</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 text-left shadow hover:bg-gray-700 transition" data-url="http://online.hdgo.site/player30/playerjs.html?file=sport2">Sport Kanaal 2</button>
+        </div>
+      </div>
+
+      <!-- Nieuws -->
+      <div>
+        <h2 class="text-xl font-semibold mb-3">📰 Nieuws</h2>
+        <div class="flex flex-col space-y-3">
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 text-left shadow hover:bg-gray-700 transition" data-url="http://online.hdgo.site/player30/playerjs.html?file=nieuws1">Nieuws Kanaal 1</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 text-left shadow hover:bg-gray-700 transition" data-url="http://online.hdgo.site/player30/playerjs.html?file=nieuws2">Nieuws Kanaal 2</button>
+        </div>
+      </div>
+
+      <!-- Films -->
+      <div>
+        <h2 class="text-xl font-semibold mb-3">🎬 Films</h2>
+        <div class="flex flex-col space-y-3">
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 text-left shadow hover:bg-gray-700 transition" data-url="http://online.hdgo.site/player30/playerjs.html?file=film1">Film Kanaal 1</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 text-left shadow hover:bg-gray-700 transition" data-url="http://online.hdgo.site/player30/playerjs.html?file=film2">Film Kanaal 2</button>
+        </div>
+      </div>
+
+      <!-- Muziek -->
+      <div>
+        <h2 class="text-xl font-semibold mb-3">🎵 Muziek</h2>
+        <div class="flex flex-col space-y-3">
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 text-left shadow hover:bg-gray-700 transition" data-url="http://online.hdgo.site/player30/playerjs.html?file=muziek1">Muziek Kanaal 1</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 text-left shadow hover:bg-gray-700 transition" data-url="http://online.hdgo.site/player30/playerjs.html?file=muziek2">Muziek Kanaal 2</button>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <script>
+    const menuBtn = document.getElementById("menuBtn");
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("overlay");
+    const closeMenu = document.getElementById("closeMenu");
+    const playerFrame = document.getElementById("playerFrame");
+    const playerContainer = document.getElementById("playerContainer");
+
+    // Open sidebar
+    menuBtn.addEventListener("click", () => {
+      sidebar.classList.remove("-translate-x-full");
+      overlay.classList.remove("hidden");
+    });
+
+    // Close sidebar
+    function closeSidebar() {
+      sidebar.classList.add("-translate-x-full");
+      overlay.classList.add("hidden");
+    }
+    closeMenu.addEventListener("click", closeSidebar);
+    overlay.addEventListener("click", closeSidebar);
+
+    // Channel switcher
+    function changeChannel(url) {
+      playerFrame.src = url;
+      closeSidebar();
+      setTimeout(() => {
+        playerContainer.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 200);
+    }
+
+    // Buttons in sidebar
+    document.querySelectorAll(".channelBtn").forEach(btn => {
+      btn.addEventListener("click", () => changeChannel(btn.dataset.url));
+    });
+
+    // Buttons in categories
+    document.querySelectorAll(".channelCard").forEach(card => {
+      card.addEventListener("click", () => changeChannel(card.dataset.url));
+    });
+  </script>
+</body>
+</html>

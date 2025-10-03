@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <title>AllesPlayer — Ad-block Voorbeeld</title>
+  <style>
+    body { margin:0; font-family:sans-serif; background:#071028; color:#eaeef6; }
+    .wrap { display:flex; flex-direction:column; gap:12px; padding:12px; }
+    .player-card { background:rgba(255,255,255,0.05); border-radius:12px; padding:8px; }
+    .video-wrap { position:relative; width:100%; aspect-ratio:16/9; border-radius:10px; overflow:hidden; background:#000; }
+    video, iframe { position:absolute; top:0; left:0; width:100%; height:100%; border:0; }
+    .btn { padding:8px 12px; border-radius:8px; border:0; background:rgba(255,255,255,0.1); color:#fff; cursor:pointer; }
+    .playlist { display:flex; gap:10px; overflow-x:auto; padding:8px; }
+    .pl-item { min-width:160px; background:rgba(255,255,255,0.06); padding:8px; border-radius:10px; cursor:pointer; }
+    .pl-item img { width:100%; height:90px; object-fit:cover; border-radius:6px; margin-bottom:6px; }
+    .title { font-weight:600; font-size:16px }
+    .meta { font-size:12px; color:#9fb0c8 }
+
+    /* ----------- AD-BLOCK CSS ----------- */
+    [id*="ad"], [class*="ad"], .ads, .adslot,
+    iframe[src*="doubleclick.net"], iframe[src*="googlesyndication"] {
+      display:none !important; visibility:hidden !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <!-- Player sectie -->
+    <section class="player-card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div id="currentTitle" class="title">Kies een kanaal</div>
+          <div id="currentMeta" class="meta">—</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button id="playPause" class="btn">Play</button>
+          <button id="toggleAds" class="btn">Ad-block: Aan</button>
+        </div>
+      </div>
+      <div class="video-wrap" id="videoWrap">
+        <video id="video" controls playsinline></video>
+        <div id="yt-player" style="display:none"></div>
+      </div>
+    </section>
+
+    <!-- Playlist -->
+    <section class="player-card">
+      <div style="font-weight:700;margin-bottom:6px">Playlist</div>
+      <div id="playlist" class="playlist"></div>
+    </section>
+
+    <!-- Beschrijving -->
+    <section class="player-card">
+      <div style="font-weight:700;margin-bottom:6px">Beschrijving</div>
+      <div id="desc"></div>
+    </section>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.4.0/dist/hls.min.js"></script>
+  <script>
+    // Demo playlist
+    const playlist = [
+      {type:'hls', url:'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',
+       title:'Test HLS', logo:'https://picsum.photos/200/120?1',
+       description:'<p>Voorbeeld <b>HLS</b> stream.</p>'},
+      {type:'youtube', url:'https://www.youtube.com/watch?v=JjTeViaVdoI',
+       title:'YouTube Demo', logo:'https://i.ytimg.com/vi/JjTeViaVdoI/hqdefault.jpg',
+       description:'<p>Voorbeeld <b>YouTube</b> video.</p>'}
+    ];
+
+    const video=document.getElementById('video');
+    const ytContainer=document.getElementById('yt-player');
+    const playlistEl=document.getElementById('playlist');
+    const desc=document.getElementById('desc');
+    const currentTitle=document.getElementById('currentTitle');
+    const currentMeta=document.getElementById('currentMeta');
+    let hls, ytPlayer;
+
+    function renderPlaylist(){
+      playlist.forEach((it,idx)=>{
+        const el=document.createElement('div');
+        el.className='pl-item';
+        el.innerHTML=`<img src="${it.logo}"><div class="title">${it.title}</div><div class="meta">${it.type}</div>`;
+        el.onclick=()=>playIndex(idx);
+        playlistEl.appendChild(el);
+      });
+    }
+
+    function playIndex(i){
+      const it=playlist[i]; currentTitle.textContent=it.title; currentMeta.textContent=it.type;
+      desc.innerHTML=it.description;
+      if(it.type==='hls'){
+        ytContainer.style.display='none'; video.style.display='block';
+        if(hls){hls.destroy();}
+        hls=new Hls(); hls.loadSource(it.url); hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, ()=>video.play());
+      } else {
+        video.style.display='none'; ytContainer.style.display='block';
+        ytContainer.innerHTML=`<iframe width="100%" height="100%" src="${it.url.replace('watch?v=','embed/')}" frameborder="0" allowfullscreen></iframe>`;
+      }
+    }
+
+    renderPlaylist();
+
+    // Eenvoudige ad-blocker (verwijder nieuwe "ad"-elementen)
+    const observer=new MutationObserver(muts=>{
+      muts.forEach(m=>m.addedNodes.forEach(n=>{
+        if(n.nodeType===1 && (n.id.includes('ad')||n.className.includes('ad'))){n.remove();}
+      }));
+    });
+    observer.observe(document.body,{childList:true,subtree:true});
+  </script>
+</body>
+</html>
