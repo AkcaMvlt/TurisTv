@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mediaplayer met Fullscreen + Portrait Lock</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(160deg, #1e293b, #0f172a);
+    }
+    /* basis iframe styling */
+    #playerFrame {
+      background: black;
+      border-radius: 1rem;
+      border: 1px solid rgba(148,163,184,0.12);
+      display: none;
+      width: 100%;
+      height: 24rem; /* default; verandert wanneer fullscreen */
+    }
+
+    /* fullscreen styling (optioneel) */
+    :fullscreen #playerFrame,
+    :-webkit-full-screen #playerFrame {
+      width: 100vw;
+      height: 100vh;
+      border-radius: 0;
+    }
+
+    /* fallback portrait-rotation (indien orientation lock niet ondersteund) */
+    .rotate-portrait {
+      transform: rotate(90deg) translateY(-100%);
+      transform-origin: top left;
+      width: 100vh; /* swapped dims */
+      height: 100vw;
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+
+    .menu-hidden { transform: translateX(-100%); }
+    .active-category { background-color: #2563eb !important; color: white !important; }
+  </style>
+</head>
+<body class="text-white font-sans">
+
+  <header class="flex justify-between items-center p-4 bg-gray-900 sticky top-0 z-50">
+    <button id="menuToggle" class="text-2xl">&#9776;</button>
+    <h1 class="text-lg sm:text-xl font-bold">📺 Mijn Media Player</h1>
+  </header>
+
+  <nav id="sideMenu" class="fixed top-0 left-0 h-full w-64 bg-gray-800 shadow-xl z-40 p-5 transition-transform menu-hidden">
+    <h2 class="text-xl font-semibold mb-6">Categorieën</h2>
+    <ul class="space-y-4">
+      <li><button class="categoryBtn w-full text-left bg-gray-700 px-4 py-2 rounded-lg" data-category="all">📂 Alle</button></li>
+      <li><button class="categoryBtn w-full text-left bg-gray-700 px-4 py-2 rounded-lg" data-category="sport">🏆 Sport</button></li>
+      <li><button class="categoryBtn w-full text-left bg-gray-700 px-4 py-2 rounded-lg" data-category="news">📰 Nieuws</button></li>
+      <li><button class="categoryBtn w-full text-left bg-gray-700 px-4 py-2 rounded-lg" data-category="music">🎵 Muziek</button></li>
+    </ul>
+  </nav>
+
+  <div id="overlay" class="fixed inset-0 bg-black/50 z-30 hidden"></div>
+
+  <main class="p-4 space-y-10">
+    <div id="playerContainer" class="w-full max-w-3xl mx-auto relative">
+      <!-- iframe: let op allow & allowfullscreen -->
+      <iframe id="playerFrame"
+              src=""
+              class=""
+              frameborder="0"
+              allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+              allowfullscreen
+              webkitallowfullscreen
+              mozallowfullscreen></iframe>
+    </div>
+
+    <section id="channels" class="space-y-6 max-w-3xl mx-auto">
+      <div class="categoryGroup" data-category="sport">
+        <h2 class="text-xl font-semibold mb-3">🏆 Sport</h2>
+        <div class="flex flex-col space-y-3">
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition"
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=sport1">Sport Kanaal 1</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition"
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=sport2">Sport Kanaal 2</button>
+        </div>
+      </div>
+
+      <div class="categoryGroup" data-category="news">
+        <h2 class="text-xl font-semibold mb-3">📰 Nieuws</h2>
+        <div class="flex flex-col space-y-3">
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition"
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=news1">Nieuws Kanaal 1</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition"
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=news2">Nieuws Kanaal 2</button>
+        </div>
+      </div>
+
+      <div class="categoryGroup" data-category="music">
+        <h2 class="text-xl font-semibold mb-3">🎵 Muziek</h2>
+        <div class="flex flex-col space-y-3">
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition"
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://listen.powerapp.com.tr/pturkslow/slow.smil/playlist.m3u8">tue</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition"
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=music2">Muziek Kanaal 2</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const menuToggle = document.getElementById("menuToggle");
+    const sideMenu = document.getElementById("sideMenu");
+    const overlay = document.getElementById("overlay");
+    const playerFrame = document.getElementById("playerFrame");
+    const playerContainer = document.getElementById("playerContainer");
+
+    menuToggle.addEventListener("click", () => {
+      sideMenu.classList.toggle("menu-hidden");
+      overlay.classList.toggle("hidden");
+    });
+    overlay.addEventListener("click", () => {
+      sideMenu.classList.add("menu-hidden");
+      overlay.classList.add("hidden");
+    });
+
+    function requestFullscreenOn(el) {
+      if (!el) return Promise.reject("geen element");
+      return new Promise((resolve, reject) => {
+        try {
+          if (el.requestFullscreen) {
+            el.requestFullscreen().then(resolve).catch(reject);
+          } else if (el.webkitRequestFullscreen) {
+            el.webkitRequestFullscreen();
+            resolve();
+          } else if (el.mozRequestFullScreen) {
+            el.mozRequestFullScreen();
+            resolve();
+          } else if (el.msRequestFullscreen) {
+            el.msRequestFullscreen();
+            resolve();
+          } else {
+            reject("Fullscreen API niet ondersteund");
+          }
+        } catch (err) {
+          reject(err);
+        }
+      });
+    }
+
+    // Probeer screen orientation lock (verbonden aan fullscreen / user gesture)
+    function lockPortraitOrientation() {
+      if (screen.orientation && screen.orientation.lock) {
+        // returns a promise
+        return screen.orientation.lock('portrait').catch(err => {
+          console.warn("Orientation lock mislukt:", err);
+          return Promise.reject(err);
+        });
+      } else if (screen.lockOrientationUniversal) { // oude API sommige browsers
+        try {
+          screen.lockOrientationUniversal('portrait');
+          return Promise.resolve();
+        } catch (e) {
+          return Promise.reject(e);
+        }
+      } else {
+        return Promise.reject("Orientation lock niet ondersteund");
+      }
+    }
+
+    // Als orientation lock faalt, gebruik fallback: voeg CSS klasse toe die rotate toepast
+    function applyPortraitFallback() {
+      playerFrame.classList.add('rotate-portrait');
+      // zorg dat iframe zichtbaar is bij fallback
+      playerFrame.style.display = 'block';
+    }
+
+    function removePortraitFallback() {
+      playerFrame.classList.remove('rotate-portrait');
+    }
+
+    // Hoofd-functie: laad kanaal, autoplay en vraag fullscreen + portrait
+    async function changeChannel(url) {
+      // Voeg autoplay param en mute (autoplay betrouwbaar) — mute is optioneel; sommige players negeren param
+      const autoplayUrl = url + (url.includes('?') ? '&autoplay=1' : '?autoplay=1');
+
+      // toon iframe
+      playerFrame.style.display = 'block';
+      removePortraitFallback();
+      playerFrame.src = autoplayUrl;
+
+      // kleine delay zodat src instelt binnen dezelfde user-gesture
+      // we voeren fullscreen en orientation lock uit in reactie op de klik
+      try {
+        // vraag fullscreen op container (betere kans om lock te laten werken)
+        await requestFullscreenOn(playerContainer);
+
+        // probeer orientation lock
+        await lockPortraitOrientation();
+
+        // als lock gelukt is: iframe past automatisch door fullscreen CSS
+        console.log("Fullscreen en portrait lock gelukt");
+      } catch (err) {
+        console.warn("Fullscreen of orientation-lock niet volledig gelukt:", err);
+        // probeer alsnog fullscreen rechtstreeks op iframe
+        try {
+          await requestFullscreenOn(playerFrame);
+        } catch (e) {
+          console.warn("Directe iframe fullscreen poging mislukte:", e);
+        }
+
+        // als orientation lock niet mogelijk is, zet fallback CSS
+        applyPortraitFallback();
+      }
+
+      // scroll eventueel naar player
+      try { playerContainer.scrollIntoView({ behavior: "smooth", block: "start" }); } catch(e){}
+    }
+
+    // Kanaal klik-events
+    document.querySelectorAll(".channelCard").forEach(card => {
+      card.addEventListener("click", (ev) => {
+        // voorkom default navigatie, we laden in iframe
+        ev.preventDefault();
+        changeChannel(card.dataset.url);
+      });
+    });
+
+    // Categorie filter + opslag (ongewijzigd)
+    function selectCategory(category) {
+      localStorage.setItem("selectedCategory", category);
+      document.querySelectorAll(".categoryBtn").forEach(b => {
+        b.classList.remove("active-category");
+        if (b.dataset.category === category) b.classList.add("active-category");
+      });
+      document.querySelectorAll(".categoryGroup").forEach(group => {
+        group.style.display = (category === "all" || group.dataset.category === category) ? "block" : "none";
+      });
+    }
+    document.querySelectorAll(".categoryBtn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        selectCategory(btn.dataset.category);
+        sideMenu.classList.add("menu-hidden");
+        overlay.classList.add("hidden");
+      });
+    });
+    window.addEventListener("load", () => {
+      const saved = localStorage.getItem("selectedCategory") || "all";
+      selectCategory(saved);
+    });
+
+    // luister naar exit-fullscreen: verwijder fallback rotatie
+    document.addEventListener("fullscreenchange", () => {
+      if (!document.fullscreenElement) {
+        // fullscreen verlaten: verwijder fallback en verberg iframe indien gewenst
+        removePortraitFallback();
+        // playerFrame.style.display = 'none'; // optioneel
+      }
+    });
+
+  </script>
+</body>
+</html>
