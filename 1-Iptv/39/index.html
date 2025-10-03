@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Mediaplayer — mobielvriendelijk (HLS)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- hls.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.0/dist/hls.min.js"></script>
+
+  <style>
+    :root { --card-bg: rgba(17,24,39,0.7); --accent: #2563eb; --radius: 12px; }
+    body { background: linear-gradient(160deg,#0f172a,#071028); color: #fff; font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
+    header { backdrop-filter: blur(6px); }
+    /* Player container - responsive */
+    #playerContainer { width: 100%; max-width: 900px; margin: 1rem auto; padding: 0.5rem; }
+    .player-box { background: rgba(2,6,23,0.45); border-radius: var(--radius); padding: 8px; box-shadow: 0 8px 30px rgba(2,6,23,0.6); display:flex; align-items:center; justify-content:center; }
+    /* keep 16:9 ratio by default and adapt on small screens */
+    .video-wrapper { position: relative; width: 100%; padding-top: 56.25%; /* 16:9 */ overflow: hidden; border-radius: calc(var(--radius) - 2px); }
+    .video-wrapper > * { position: absolute; top:0; left:0; width:100%; height:100%; border:0; display:block; }
+    video, iframe { border-radius: inherit; background: black; }
+
+    /* Controls row */
+    .controls { display:flex; gap:8px; align-items:center; justify-content:space-between; padding:8px 4px; }
+    .btn { background: var(--card-bg); padding: 8px 12px; border-radius: 10px; cursor:pointer; }
+    .btn-primary { background: linear-gradient(90deg,var(--accent),#1e40af); color:#fff; }
+
+    /* Smaller devices: taller video */
+    @media (max-width:420px) {
+      .video-wrapper { padding-top: 75%; } /* 4:3 - betere verticale weergave */
+    }
+
+    /* small overlay "Tap to unmute" */
+    .muted-overlay {
+      position:absolute; inset:8px; display:flex; align-items:flex-end; justify-content:flex-end; pointer-events:none;
+    }
+    .muted-overlay .hint { pointer-events:auto; margin:12px; padding:6px 10px; background:rgba(0,0,0,0.45); border-radius:8px; font-size:13px; }
+  </style>
+</head>
+<body>
+
+<header class="flex items-center justify-between p-4 sticky top-0 z-50 bg-black/30">
+  <div class="flex items-center gap-3">
+    <button id="menuToggle" class="text-2xl">☰</button>
+    <h1 class="text-lg font-semibold">Mediaplayer</h1>
+  </div>
+  <div class="text-sm opacity-80">Mobielvriendelijk — HLS (.m3u8)</div>
+</header>
+
+<!-- side menu (simple) -->
+<nav id="sideMenu" class="fixed left-0 top-0 h-full w-64 bg-gray-900/80 p-5 z-40 transform -translate-x-full transition-transform">
+  <h2 class="text-xl mb-4">Categorieën</h2>
+  <ul class="space-y-3">
+    <li><button class="categoryBtn btn w-full text-left" data-category="all">Alle</button></li>
+    <li><button class="categoryBtn btn w-full text-left" data-category="sport">Sport</button></li>
+    <li><button class="categoryBtn btn w-full text-left" data-category="news">Nieuws</button></li>
+    <li><button class="categoryBtn btn w-full text-left" data-category="music">Muziek</button></li>
+  </ul>
+</nav>
+<div id="overlay" class="fixed inset-0 bg-black/50 z-30 hidden"></div>
+
+<main class="p-4 space-y-6">
+  <!-- Player -->
+  <div id="playerContainer" class="player-box">
+    <div style="width:100%">
+      <div class="controls">
+        <div>
+          <span id="currentLabel" class="text-sm opacity-90">Geen kanaal geselecteerd</span>
+        </div>
+        <div class="flex gap-2">
+          <button id="toggleMute" class="btn" title="Mute/unmute">🔈</button>
+          <button id="fullscreenBtn" class="btn btn-primary">Fullscreen</button>
+        </div>
+      </div>
+
+      <div class="video-wrapper" id="videoWrapper">
+        <!-- video element for .m3u8 -->
+        <video id="hlsVideo" playsinline webkit-playsinline controls></video>
+
+        <!-- iframe fallback for your player pages -->
+        <iframe id="embedFrame" style="display:none;"></iframe>
+
+        <div class="muted-overlay"><div id="mutedHint" class="hint" style="display:none">Tap to unmute</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Channels list (voorbeeld). Vervang data-url door echte m3u8 links of jouw embed-links -->
+  <section id="channels" class="max-w-3xl mx-auto space-y-6">
+    <div class="categoryGroup" data-category="sport">
+      <h2 class="text-lg font-semibold">🏆 Sport</h2>
+      <div class="flex flex-col gap-3">
+        <!-- voorbeeld m3u8 -->
+        <button class="channelCard btn" data-url="https://example.com/stream1.m3u8" data-label="Sport Kanaal (m3u8)">Sport Kanaal (m3u8)</button>
+        <!-- jouw bestaande embed page (iframe) -->
+        <button class="channelCard btn" data-url="http://online.hdgo.site/player30/playerjs.html?file=sport1" data-label="Sport Kanaal (embed)">Sport Kanaal (embed)</button>
+      </div>
+    </div>
+
+    <div class="categoryGroup" data-category="news">
+      <h2 class="text-lg font-semibold">📰 Nieuws</h2>
+      <div class="flex flex-col gap-3">
+        <button class="channelCard btn" data-url="https://example.com/newsstream.m3u8" data-label="Nieuws Kanaal">Nieuws Kanaal (m3u8)</button>
+        <button class="channelCard btn" data-url="http://online.hdgo.site/player30/playerjs.html?file=news1" data-label="Nieuws Kanaal (embed)">Nieuws Kanaal (embed)</button>
+      </div>
+    </div>
+
+    <div class="categoryGroup" data-category="music">
+      <h2 class="text-lg font-semibold">🎵 Muziek</h2>
+      <div class="flex flex-col gap-3">
+        <button class="channelCard btn" data-url="https://example.com/musicstream.m3u8" data-label="Muziek Kanaal">Muziek Kanaal (m3u8)</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+  // Elements
+  const menuToggle = document.getElementById('menuToggle');
+  const sideMenu = document.getElementById('sideMenu');
+  const overlay = document.getElementById('overlay');
+  const video = document.getElementById('hlsVideo');
+  const iframe = document.getElementById('embedFrame');
+  const videoWrapper = document.getElementById('videoWrapper');
+  const currentLabel = document.getElementById('currentLabel');
+  const toggleMute = document.getElementById('toggleMute');
+  const fullscreenBtn = document.getElementById('fullscreenBtn');
+  const mutedHint = document.getElementById('mutedHint');
+
+  // menu toggle
+  menuToggle.addEventListener('click', () => {
+    sideMenu.classList.toggle('translate-x-0');
+    sideMenu.classList.toggle('-translate-x-full');
+    overlay.classList.toggle('hidden');
+  });
+  overlay.addEventListener('click', () => {
+    sideMenu.classList.add('-translate-x-full');
+    overlay.classList.add('hidden');
+  });
+
+  // helper: detect .m3u8
+  function isM3U8(url) {
+    try {
+      return /\.m3u8($|\?)/i.test(url) || url.includes('format=m3u8') || url.includes('ext=m3u8');
+    } catch(e) { return false; }
+  }
+
+  // HLS attach helper (hls.js fallback)
+  let hls = null;
+  function attachHls(url, autoplay = true) {
+    // cleanup existing
+    if (hls) { hls.destroy(); hls = null; }
+    video.style.display = 'block';
+    iframe.style.display = 'none';
+
+    // for iOS Safari native HLS works via <video>.src = url
+    const isNativeHls = /^((?!chrome|android).)*safari/i.test(navigator.userAgent) || video.canPlayType('application/vnd.apple.mpegurl');
+    if (isNativeHls) {
+      video.src = url;
+      // mute if autoplay to allow autoplay on mobile browsers
+      if (autoplay) { video.muted = true; video.play().catch(()=>{}); mutedHint.style.display = video.muted ? 'block' : 'none'; }
+      return;
+    }
+
+    // use hls.js if supported
+    if (Hls.isSupported()) {
+      hls = new Hls();
+      hls.loadSource(url);
+      hls.attachMedia(video);
+      hls.on(Hls.Events.MANIFEST_PARSED, function() {
+        if (autoplay) { video.muted = true; video.play().catch(()=>{}); mutedHint.style.display = video.muted ? 'block' : 'none'; }
+      });
+      hls.on(Hls.Events.ERROR, function(event, data) {
+        console.warn('HLS error', data);
+      });
+    } else {
+      // can't play
+      video.style.display = 'none';
+      currentLabel.textContent = 'Dit apparaat ondersteunt geen HLS (m3u8).';
+    }
+  }
+
+  // embed iframe
+  function attachIframe(url) {
+    // destroy hls if active
+    if (hls) { hls.destroy(); hls = null; }
+    video.pause();
+    video.removeAttribute('src'); video.load();
+    video.style.display = 'none';
+
+    iframe.style.display = 'block';
+    iframe.src = url;
+  }
+
+  // play channel logic
+  function changeChannel(url, label) {
+    currentLabel.textContent = label || url;
+    if (!url) return;
+    if (isM3U8(url)) {
+      attachHls(url, /*autoplay*/ true);
+    } else {
+      // sometimes your old URLs are pages that take a "file=" param pointing to stream
+      // If the URL contains a .m3u8 as parameter we can extract it; else fallback to iframe
+      const m3u8Match = url.match(/(https?:\/\/[^'"\s]+\.m3u8[^'"\s]*)/i);
+      if (m3u8Match) {
+        attachHls(m3u8Match[1], true);
+        return;
+      }
+      attachIframe(url);
+    }
+
+    // scroll into view on mobile
+    setTimeout(() => {
+      document.getElementById('playerContainer').scrollIntoView({behavior:'smooth', block:'center'});
+    }, 200);
+  }
+
+  // connect buttons
+  document.querySelectorAll('.channelCard').forEach(btn => {
+    btn.addEventListener('click', () => {
+      changeChannel(btn.dataset.url, btn.dataset.label || btn.textContent.trim());
+    });
+  });
+
+  // mute toggle
+  toggleMute.addEventListener('click', () => {
+    if (video.style.display === 'block') {
+      video.muted = !video.muted;
+      mutedHint.style.display = video.muted ? 'block' : 'none';
+      toggleMute.textContent = video.muted ? '🔈' : '🔊';
+    }
+  });
+
+  // when user taps video, hide hint
+  video.addEventListener('play', () => { mutedHint.style.display = video.muted ? 'block' : 'none'; });
+  video.addEventListener('click', () => { mutedHint.style.display = 'none'; });
+
+  // fullscreen
+  fullscreenBtn.addEventListener('click', async () => {
+    const target = (video.style.display === 'block') ? video : iframe;
+    if (!document.fullscreenElement) {
+      try { await target.requestFullscreen(); } catch(e) { console.warn(e); }
+    } else {
+      try { await document.exitFullscreen(); } catch(e) { console.warn(e); }
+    }
+  });
+
+  // category filter + save
+  function selectCategory(category) {
+    localStorage.setItem('selectedCategory', category);
+    document.querySelectorAll('.categoryBtn').forEach(b => {
+      b.classList.remove('active-category'); if (b.dataset.category === category) b.classList.add('active-category');
+    });
+    document.querySelectorAll('.categoryGroup').forEach(g => {
+      g.style.display = (category === 'all' || g.dataset.category === category) ? 'block' : 'none';
+    });
+  }
+  document.querySelectorAll('.categoryBtn').forEach(b => b.addEventListener('click', () => {
+    selectCategory(b.dataset.category);
+    sideMenu.classList.add('-translate-x-full'); overlay.classList.add('hidden');
+  }));
+
+  // init
+  window.addEventListener('load', () => {
+    const saved = localStorage.getItem('selectedCategory') || 'all';
+    selectCategory(saved);
+    // set defaults: hide iframe initially
+    iframe.style.display = 'none';
+    video.style.display = 'block';
+    // show muted hint only when video is muted and visible
+    mutedHint.style.display = (video.muted && video.style.display === 'block') ? 'block' : 'none';
+  });
+
+  // orientation: optional improvement to prefer portrait style when phone in landscape
+  function onResize() {
+    const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+    const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+    // if landscape on small device, make wrapper taller (keeps video visible)
+    if (vw > vh && vw < 900) {
+      videoWrapper.style.paddingTop = '100%'; // make it taller-like a portrait card
+    } else {
+      videoWrapper.style.paddingTop = (vw <= 420 ? '75%' : '56.25%');
+    }
+  }
+  window.addEventListener('resize', onResize);
+  window.addEventListener('orientationchange', onResize);
+
+</script>
+
+</body>
+</html>
