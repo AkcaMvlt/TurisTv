@@ -58,13 +58,17 @@ nav a:hover {
     background-color: #ff6b6b;
 }
 
-/* Video container */
+/* Video container responsive */
 .video-container {
     position: relative;
     width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
 }
 video {
     width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
     border-radius: 12px;
 }
 
@@ -103,16 +107,26 @@ video {
     margin-top: 4px;
     font-size: 0.9em;
 }
+
+/* Mobile optimalisatie */
 @media (max-width: 600px) {
-    .channel { width: 100px; }
+    .channel { width: 90px; }
     header h1 { font-size: 1.2em; }
+    .video-container {
+        max-width: 100%;
+        padding: 0 5px;
+    }
+    video {
+        border-radius: 6px;
+        max-height: 220px; /* kleiner op mobiel */
+    }
 }
 </style>
 </head>
 <body>
 
 <header>
-    <h1>StreamBox</h1>
+ 
     <span class="menu-toggle" onclick="toggleMenu()">☰</span>
 </header>
 
@@ -127,114 +141,22 @@ video {
     <!-- Player -->
     <div class="video-container" id="videoContainer">
         <video id="player" class="video-js vjs-default-skin" controls playsinline>
-            <source src="https://rnttwmjcin.turknet.ercdn.net/lcpmvefbyo/atv/atv.m3u8" type="application/x-mpegURL">
+            <source src="https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8" type="application/x-mpegURL">
             Je browser ondersteunt de video tag niet.
         </video>
     </div>
 
-    <!-- Playlist per categorie -->
-    <div class="playlist" id="news">
-        <div class="channel" onclick="playChannel('https://rnttwmjcin.turknet.ercdn.net/lcpmvefbyo/atv/atv.m3u8')">
+    <!-- Playlist voorbeeld -->
+    <div class="playlist active" id="news">
+        <div class="channel" onclick="playChannel('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">
             <img src="https://od.lk/s/NzJfNDc2NjczNjZf/arkabodd.png" alt="ATV">
             <span>ATV</span>
         </div>
-        <div class="channel" onclick="playChannel('https://ackaxsqacw.turknet.ercdn.net/ozfkfbbjba/kanald/kanald.m3u8')">
+        <div class="channel" onclick="playChannel('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">
             <img src="https://od.lk/s/NzJfNDc2NjczNjZf/arkabodd.png" alt="BBC">
-            <span>kanal</span>
-        </div>
-        <div class="channel" onclick="playChannel('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">
-            <img src="https://od.lk/s/NzJfNDc2NjczNjZf/arkabodd.png" alt="CNN">
-            <span>CNN</span>
+            <span>BBC</span>
         </div>
     </div>
-
-    <div class="playlist" id="sports">
-        <div class="channel" onclick="playChannel('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">
-            <img src="https://od.lk/s/NzJfNDc2NjczNjZf/arkabodd.png" alt="ESPN">
-            <span>ESPN</span>
-        </div>
-        <div class="channel" onclick="playChannel('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">
-            <img src="https://od.lk/s/NzJfNDc2NjczNjZf/arkabodd.png?text=FoxSports" alt="Fox Sports">
-            <span>rtt</span>
-        </div>
-    </div>
-
-    <div class="playlist" id="movies">
-        <div class="channel" onclick="playChannel('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">
-            <img src="https://od.lk/s/NzJfNDc2NjczNjZf/arkabodd.png?text=Film1" alt="Film1">
-            <span>Film1</span>
-        </div>
-        <div class="channel" onclick="playChannel('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">
-            <img src="https://od.lk/s/NzJfNDc2NjczNjZf/arkabodd.png?text=Film2" alt="Film2">
-            <span>Film2</span>
-        </div>
-
-        <div class="channel" onclick="playChannel('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">
-            <img src="https://od.lk/s/NzJfNDc2NjczNjZf/arkabodd.png?text=Film2" alt="Film2">
-            <span>Film2</span>
-        </div>
-
-        <div class="channel" onclick="playChannel('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">
-            <img src="https://od.lk/s/NzJfNDc2NjczNjZf/arkabodd.png?text=Film2" alt="Film2">
-            <span>Film2</span>
-        </div>
-        <div class="channel" onclick="playChannel('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">
-            <img src="https://od.lk/s/NzJfNDc2NjczNjZf/arkabodd.png?text=Film2" alt="Film2">
-            <span>Film2</span>
-        </div>
-
-        <div class="channel" onclick="playChannel('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">
-            <img src="https://od.lk/s/NzJfNDc2NjczNjZf/arkabodd.png?text=Film2" alt="Film2">
-            <span>Film2</span>
-        </div>
-
-        <div class="channel" onclick="playChannel('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">
-            <img src="https://od.lk/s/NzJfNDc2NjczNjZf/arkabodd.png?text=Film2" alt="Film2">
-            <span>Film2</span>
-        </div>
-
-        <div class="channel" onclick="playChannel('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">
-            <img src="https://od.lk/s/NzJfNDc2NjczNjZf/arkabodd.png?text=Film2" alt="Film2">
-            <span>Film2</span>
-        </div>
-
-        <div class="channel" onclick="playChannel('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">
-            <img src="https://od.lk/s/NzJfNDc2NjczNjZf/arkabodd.png?text=Film2" alt="Film2">
-            <span>Film2</span>
-        </div>
-
-        <div class="channel" onclick="playChannel('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">
-            <img src="https://od.lk/s/NzJfNDc2NjczNjZf/arkabodd.png?text=Film2" alt="Film2">
-            <span>Film2</span>
-        </div>
-
-        <div class="channel" onclick="playChannel('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">
-            <img src="https://od.lk/s/NzJfNDc2NjczNjZf/arkabodd.png?text=Film2" alt="Film2">
-            <span>Film2</span>
-        </div>
-
-        <div class="channel" onclick="playChannel('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">
-            <img src="https://od.lk/s/NzJfNDc2NjczNjZf/arkabodd.png?text=Film2" alt="Film2">
-            <span>Film2</span>
-        </div>
-
-        <div class="channel" onclick="playChannel('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">
-            <img src="https://od.lk/s/NzJfNDc2NjczNjZf/arkabodd.png?text=Film2" alt="Film2">
-            <span>Film2</span>
-        </div>
-    </div>
-
-    <div class="playlist" id="kids">
-        <div class="channel" onclick="playChannel('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">
-            <img src="https://od.lk/s/NzJfNDc2NjczNjZf/arkabodd.png?text=Cartoon1" alt="Cartoon1">
-            <span>Cartoon1</span>
-        </div>
-        <div class="channel" onclick="playChannel('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">
-            <img src="https://od.lk/s/NzJfNDc2NjczNjZf/arkabodd.png?text=Cartoon2" alt="Cartoon2">
-            <span>Cartoon2</span>
-        </div>
-    </div>
-
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/video.js@7.10.2/dist/video.js"></script>
@@ -255,10 +177,18 @@ function selectCategory(catId) {
     document.getElementById('videoContainer').scrollIntoView({behavior: 'smooth', block: 'start'});
 }
 
-// Speel kanaal
+// Speel kanaal en forceer fullscreen in portrait
 function playChannel(url) {
     player.src({ type: 'application/x-mpegURL', src: url });
     player.play();
+    // Probeer fullscreen openen
+    if (player.requestFullscreen) {
+        player.requestFullscreen().catch(()=>{});
+    }
+    // Probeer oriëntatie naar portrait te forceren
+    if (screen.orientation && screen.orientation.lock) {
+        screen.orientation.lock("portrait").catch(()=>{});
+    }
     document.getElementById('videoContainer').scrollIntoView({behavior: 'smooth', block: 'start'});
 }
 
