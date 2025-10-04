@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StreamBox Live TV</title>
+<link href="https://cdn.jsdelivr.net/npm/video.js@7.10.2/dist/video-js.css" rel="stylesheet">
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #121212;
+    color: #fff;
+}
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #1e1e1e;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+header h1 {
+    margin: 0;
+    font-size: 1.5em;
+    color: #ff6b6b;
+}
+.menu-toggle {
+    font-size: 1.8em;
+    cursor: pointer;
+}
+
+/* Sidebar / Hamburger menu */
+nav {
+    position: fixed;
+    top: 0;
+    left: -250px;
+    width: 250px;
+    height: 100%;
+    background-color: #222;
+    padding-top: 60px;
+    transition: left 0.3s;
+    z-index: 999;
+}
+nav.active {
+    left: 0;
+}
+nav a {
+    display: block;
+    color: #fff;
+    text-decoration: none;
+    padding: 15px 20px;
+    border-bottom: 1px solid #333;
+}
+nav a:hover {
+    background-color: #ff6b6b;
+}
+
+/* Video container */
+.video-container {
+    position: relative;
+    width: 100%;
+}
+video {
+    width: 100%;
+    border-radius: 12px;
+}
+
+/* Playlist horizontal */
+.playlist {
+    display: none;
+    flex-direction: row;
+    overflow-x: auto;
+    margin-top: 15px;
+    gap: 10px;
+    scroll-snap-type: x mandatory;
+}
+.playlist.active {
+    display: flex;
+}
+.playlist::-webkit-scrollbar {
+    height: 6px;
+}
+.playlist::-webkit-scrollbar-thumb {
+    background: #ff6b6b;
+    border-radius: 3px;
+}
+.channel {
+    flex: 0 0 auto;
+    width: 120px;
+    text-align: center;
+    cursor: pointer;
+    scroll-snap-align: start;
+}
+.channel img {
+    width: 100%;
+    border-radius: 8px;
+}
+.channel span {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.9em;
+}
+@media (max-width: 600px) {
+    .channel { width: 100px; }
+    header h1 { font-size: 1.2em; }
+}
+</style>
+</head>
+<body>
+
+<header>
+    <h1>StreamBox</h1>
+    <span class="menu-toggle" onclick="toggleMenu()">☰</span>
+</header>
+
+<nav id="sidebar">
+    <a href="#" onclick="selectCategory('news')">Nieuws</a>
+    <a href="#" onclick="selectCategory('sports')">Sport</a>
+    <a href="#" onclick="selectCategory('movies')">Films</a>
+    <a href="#" onclick="selectCategory('kids')">Kinderen</a>
+</nav>
+
+<main>
+    <!-- Player -->
+    <div class="video-container" id="videoContainer">
+        <video id="player" class="video-js vjs-default-skin" controls playsinline>
+            <source src="https://rnttwmjcin.turknet.ercdn.net/lcpmvefbyo/atv/atv.m3u8" type="application/x-mpegURL">
+            Je browser ondersteunt de video tag niet.
+        </video>
+    </div>
+
+    <!-- Playlist per categorie -->
+    <div class="playlist" id="news">
+        <div class="channel" onclick="playChannel('https://rnttwmjcin.turknet.ercdn.net/lcpmvefbyo/atv/atv.m3u8')">
+            <img src="https://od.lk/s/NzJfNDc2NjczNjZf/arkabodd.png" alt="ATV">
+            <span>ATV</span>
+        </div>
+        <div class="channel" onclick="playChannel('https://ackaxsqacw.turknet.ercdn.net/ozfkfbbjba/kanald/kanald.m3u8')">
+            <img src="https://od.lk/s/NzJfNDc2NjczNjZf/arkabodd.png" alt="BBC">
+            <span>kanal</span>
+        </div>
+        <div class="channel" onclick="playChannel('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">
+            <img src="https://od.lk/s/NzJfNDc2NjczNjZf/arkabodd.png" alt="CNN">
+            <span>CNN</span>
+        </div>
+    </div>
+
+    <div class="playlist" id="sports">
+        <div class="channel" onclick="playChannel('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">
+            <img src="https://od.lk/s/NzJfNDc2NjczNjZf/arkabodd.png" alt="ESPN">
+            <span>ESPN</span>
+        </div>
+        <div class="channel" onclick="playChannel('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">
+            <img src="https://od.lk/s/NzJfNDc2NjczNjZf/arkabodd.png?text=FoxSports" alt="Fox Sports">
+            <span>rtt</span>
+        </div>
+    </div>
+
+    <div class="playlist" id="movies">
+        <div class="channel" onclick="playChannel('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">
+            <img src="https://od.lk/s/NzJfNDc2NjczNjZf/arkabodd.png?text=Film1" alt="Film1">
+            <span>Film1</span>
+        </div>
+        <div class="channel" onclick="playChannel('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">
+            <img src="https://od.lk/s/NzJfNDc2NjczNjZf/arkabodd.png?text=Film2" alt="Film2">
+            <span>Film2</span>
+        </div>
+
+        <div class="channel" onclick="playChannel('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">
+            <img src="https://od.lk/s/NzJfNDc2NjczNjZf/arkabodd.png?text=Film2" alt="Film2">
+            <span>Film2</span>
+        </div>
+
+        <div class="channel" onclick="playChannel('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">
+            <img src="https://od.lk/s/NzJfNDc2NjczNjZf/arkabodd.png?text=Film2" alt="Film2">
+            <span>Film2</span>
+        </div>
+        <div class="channel" onclick="playChannel('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">
+            <img src="https://od.lk/s/NzJfNDc2NjczNjZf/arkabodd.png?text=Film2" alt="Film2">
+            <span>Film2</span>
+        </div>
+
+        <div class="channel" onclick="playChannel('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">
+            <img src="https://od.lk/s/NzJfNDc2NjczNjZf/arkabodd.png?text=Film2" alt="Film2">
+            <span>Film2</span>
+        </div>
+
+        <div class="channel" onclick="playChannel('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">
+            <img src="https://od.lk/s/NzJfNDc2NjczNjZf/arkabodd.png?text=Film2" alt="Film2">
+            <span>Film2</span>
+        </div>
+
+        <div class="channel" onclick="playChannel('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">
+            <img src="https://od.lk/s/NzJfNDc2NjczNjZf/arkabodd.png?text=Film2" alt="Film2">
+            <span>Film2</span>
+        </div>
+
+        <div class="channel" onclick="playChannel('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">
+            <img src="https://od.lk/s/NzJfNDc2NjczNjZf/arkabodd.png?text=Film2" alt="Film2">
+            <span>Film2</span>
+        </div>
+
+        <div class="channel" onclick="playChannel('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">
+            <img src="https://od.lk/s/NzJfNDc2NjczNjZf/arkabodd.png?text=Film2" alt="Film2">
+            <span>Film2</span>
+        </div>
+
+        <div class="channel" onclick="playChannel('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">
+            <img src="https://od.lk/s/NzJfNDc2NjczNjZf/arkabodd.png?text=Film2" alt="Film2">
+            <span>Film2</span>
+        </div>
+
+        <div class="channel" onclick="playChannel('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">
+            <img src="https://od.lk/s/NzJfNDc2NjczNjZf/arkabodd.png?text=Film2" alt="Film2">
+            <span>Film2</span>
+        </div>
+
+        <div class="channel" onclick="playChannel('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">
+            <img src="https://od.lk/s/NzJfNDc2NjczNjZf/arkabodd.png?text=Film2" alt="Film2">
+            <span>Film2</span>
+        </div>
+    </div>
+
+    <div class="playlist" id="kids">
+        <div class="channel" onclick="playChannel('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">
+            <img src="https://od.lk/s/NzJfNDc2NjczNjZf/arkabodd.png?text=Cartoon1" alt="Cartoon1">
+            <span>Cartoon1</span>
+        </div>
+        <div class="channel" onclick="playChannel('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">
+            <img src="https://od.lk/s/NzJfNDc2NjczNjZf/arkabodd.png?text=Cartoon2" alt="Cartoon2">
+            <span>Cartoon2</span>
+        </div>
+    </div>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/video.js@7.10.2/dist/video.js"></script>
+<script>
+var player = videojs('player');
+
+// Hamburger menu toggle
+function toggleMenu() {
+    document.getElementById('sidebar').classList.toggle('active');
+}
+
+// Selecteer categorie
+function selectCategory(catId) {
+    document.getElementById('sidebar').classList.remove('active');
+    document.querySelectorAll('.playlist').forEach(p => p.classList.remove('active'));
+    var selected = document.getElementById(catId);
+    if(selected) selected.classList.add('active');
+    document.getElementById('videoContainer').scrollIntoView({behavior: 'smooth', block: 'start'});
+}
+
+// Speel kanaal
+function playChannel(url) {
+    player.src({ type: 'application/x-mpegURL', src: url });
+    player.play();
+    document.getElementById('videoContainer').scrollIntoView({behavior: 'smooth', block: 'start'});
+}
+
+// Fullscreen bij mobiel landscape
+window.addEventListener('orientationchange', function() {
+    if(window.innerHeight < window.innerWidth) {
+        player.requestFullscreen().catch(()=>{});
+    }
+});
+</script>
+
+</body>
+</html>
