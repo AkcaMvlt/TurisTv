@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mediaplayer – HDGO + Mobiel ondersteuning</title>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <style>
+    body {
+      background: #0a0f1c;
+      color: white;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      text-align: center;
+    }
+    h1 { padding: 10px; }
+    .player-container {
+      max-width: 900px;
+      margin: 20px auto;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(0,0,0,0.4);
+      background: black;
+    }
+    iframe, video {
+      width: 100%;
+      aspect-ratio: 16/9;
+      border: 0;
+      display: block;
+      background: black;
+    }
+    button {
+      background: #06b6d4;
+      color: #000;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 16px;
+      cursor: pointer;
+      margin: 10px;
+    }
+    button:hover { background: #0fc8e9; }
+  </style>
+</head>
+<body>
+
+  <h1>📺 HDGO Player met Mobiele Ondersteuning</h1>
+
+  <div class="player-container">
+    <div id="playerArea"></div>
+  </div>
+
+  <div>
+    <button onclick="loadChannel('https://tv-trt1.medya.trt.com.tr/master.m3u8')">🎬 TRT 1</button>
+    <button onclick="loadChannel('https://rnttwmjcin.turknet.ercdn.net/lcpmvefbyo/atv/atv.m3u8')">📺 ATV</button>
+    <button onclick="loadChannel('https://ackaxsqacw.turknet.ercdn.net/ozfkfbbjba/kanald/kanald.m3u8')">📡 Kanal D</button>
+  </div>
+
+  <script>
+    let hls;
+    const playerArea = document.getElementById("playerArea");
+
+    function loadChannel(streamUrl) {
+      const isMobile = /iPhone|iPad|Android/i.test(navigator.userAgent);
+      playerArea.innerHTML = "";
+
+      if (isMobile) {
+        // 🎯 MOBIEL: gebruik <video> direct, zodat iPhone/Android het afspeelt
+        const video = document.createElement("video");
+        video.controls = true;
+        video.autoplay = true;
+        video.playsInline = true;
+        playerArea.appendChild(video);
+
+        if (video.canPlayType('application/vnd.apple.mpegurl')) {
+          // Safari ondersteunt native HLS
+          video.src = streamUrl;
+        } else if (Hls.isSupported()) {
+          // Android / Chrome gebruikt HLS.js
+          hls = new Hls();
+          hls.loadSource(streamUrl);
+          hls.attachMedia(video);
+        } else {
+          alert("Je browser ondersteunt geen HLS.");
+        }
+      } else {
+        // 💻 PC: gebruik HDGO player iframe
+        const iframe = document.createElement("iframe");
+        iframe.src = `http://online.hdgo.site/player30/playerjs.html?file=${encodeURIComponent(streamUrl)}`;
+        iframe.allow = "autoplay; fullscreen; encrypted-media; picture-in-picture";
+        iframe.allowFullscreen = true;
+        playerArea.appendChild(iframe);
+      }
+    }
+  </script>
+
+</body>
+</html>
