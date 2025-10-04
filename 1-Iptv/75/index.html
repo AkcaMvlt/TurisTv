@@ -5,12 +5,11 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Turis Tv</title>
 
-  <!-- favicon voorbeelden -->
   <link rel="icon" href="favicon.ico" sizes="32x32">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
 
   <style>
-    :root{
+    :root {
       --bg:#0a0f1c;
       --card:#12192e;
       --accent:#06b6d4;
@@ -18,87 +17,69 @@
       --card-radius:10px;
     }
     *{box-sizing:border-box}
-    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:#fff;-webkit-font-smoothing:antialiased}
-    header{background:var(--card);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:50;}
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:#fff;}
+    header{background:var(--card);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
     .brand{display:flex;align-items:center;gap:10px;}
-    .brand img{width:40px;height:40px;border-radius:8px;object-fit:cover;flex:0 0 40px;}
+    .brand img{width:40px;height:40px;border-radius:8px;}
     .brand h1{font-size:18px;margin:0}
-    .hamburger{background:none;border:none;color:#fff;font-size:26px;cursor:pointer;padding:10px;border-radius:8px;display:flex;align-items:center;justify-content:center;}
-    .hamburger:active{transform:scale(0.98)}
-    .container{display:grid;grid-template-columns:240px 1fr;gap:var(--gap);padding:16px;align-items:start;}
-    nav{background:var(--card);border-radius:var(--card-radius);padding:12px;min-height:120px}
+    .hamburger{background:none;border:none;color:#fff;font-size:26px;cursor:pointer;padding:10px;border-radius:8px;}
+    .container{display:grid;grid-template-columns:240px 1fr;gap:var(--gap);padding:16px;}
+    nav{background:var(--card);border-radius:var(--card-radius);padding:12px}
     nav h2{font-size:16px;margin:0 0 10px 0}
     nav ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}
-    nav li{padding:10px;border-radius:8px;cursor:pointer;font-size:15px;user-select:none;}
+    nav li{padding:10px;border-radius:8px;cursor:pointer}
     nav li:hover{background:#1f2a49}
     .movies{display:grid;grid-template-columns:repeat(auto-fill, minmax(160px, 1fr));gap:var(--gap);}
-    .card{background:var(--card);border-radius:var(--card-radius);overflow:hidden;cursor:pointer;display:flex;flex-direction:column;transition:transform 0.15s, box-shadow 0.15s;-webkit-tap-highlight-color: transparent;}
-    .card:active{transform:scale(0.995)}
-    .card:hover{transform:translateY(-4px)}
-    .card img{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;display:block;}
+    .card{background:var(--card);border-radius:var(--card-radius);overflow:hidden;cursor:pointer;display:flex;flex-direction:column;}
+    .card img{width:100%;aspect-ratio:16/9;object-fit:cover;}
     .card .info{padding:10px}
-    .card .info h3{margin:0;font-size:15px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .card .info h3{margin:0;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .player{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);display:none;align-items:center;justify-content:center;flex-direction:column;z-index:1000;padding:20px;}
-    .player .media-wrap{width:95%;max-width:1000px;background:transparent;border-radius:12px;display:flex;align-items:center;justify-content:center;}
-    .player iframe, .player video{width:100%;height:auto;aspect-ratio:16/9;border-radius:10px;display:block;max-height:80vh;}
+    .player .media-wrap{width:95%;max-width:1000px;}
+    .player iframe, .player video{width:100%;height:auto;aspect-ratio:16/9;border-radius:10px;max-height:80vh;}
     .closeBtn{margin-top:14px;padding:10px 18px;border:none;border-radius:8px;background:var(--accent);color:#000;font-weight:700;cursor:pointer}
-    @media (max-width: 900px){.container{grid-template-columns:1fr;padding:12px;gap:10px}nav{position:fixed;top:64px;left:12px;right:12px;z-index:999;display:none;padding:12px}nav.show{display:block}.brand h1{font-size:16px}.brand img{width:36px;height:36px}.movies{grid-template-columns:repeat(auto-fill, minmax(140px, 1fr))}.card .info h3{font-size:14px}.hamburger{font-size:24px;padding:8px}}
-    @media (max-width:480px){header{padding:10px}.brand img{width:32px;height:32px}.brand h1{font-size:15px}.card img{aspect-ratio: 4/3}.movies{grid-template-columns:repeat(2,1fr);gap:8px}.card .info{padding:8px}.card .info h3{font-size:13px}.closeBtn{padding:10px 14px}}
-    button:focus, nav li:focus {outline:2px solid #06b6d4;outline-offset:3px}
+    @media (max-width:900px){.container{grid-template-columns:1fr}.hamburger{font-size:24px}}
   </style>
 </head>
 <body>
   <header>
     <div class="brand">
-      <img src="https://od.lk/s/NzJfNDc2NjA1NTRf/turistv.png?random=1" alt="logo">
+      <img src="https://od.lk/s/NzJfNDc2NjA1NTRf/turistv.png" alt="logo">
       <h1>Turis Tv</h1>
     </div>
-    <div>
-      <button class="hamburger" aria-expanded="false" aria-controls="sideMenu" onclick="toggleMenu()" title="Menu">☰</button>
-    </div>
+    <button class="hamburger" onclick="toggleMenu()">☰</button>
   </header>
 
   <div class="container">
-    <nav id="sideMenu" aria-hidden="true">
+    <nav id="sideMenu">
       <h2>Categorieën</h2>
       <ul>
-        <li tabindex="0" onclick="filterMovies('all');toggleMenu()">Hepsi</li>
-        <li tabindex="0" onclick="filterMovies('ulusal');toggleMenu()">Ulusal</li>
-        <li tabindex="0" onclick="filterMovies('haber');toggleMenu()">Haber</li>
-        <li tabindex="0" onclick="filterMovies('spor');toggleMenu()">Spor</li>
-        <li tabindex="0" onclick="filterMovies('belgesel');toggleMenu()">Belgesel</li>
-        <li tabindex="0" onclick="filterMovies('muzik');toggleMenu()">Muzik</li>
-        <li tabindex="0" onclick="filterMovies('film');toggleMenu()">Film</li>
-        <li tabindex="0" onclick="filterMovies('cocuk');toggleMenu()">Çocuk</li>
-        <li tabindex="0" onclick="filterMovies('youtube');toggleMenu()">YouTube Playlist</li>
+        <li onclick="filterMovies('all')">Alle</li>
+        <li onclick="filterMovies('film')">Films</li>
+        <li onclick="filterMovies('youtube')">YouTube</li>
       </ul>
     </nav>
-
     <main>
-      <div class="movies" id="movieGrid" aria-live="polite"></div>
+      <div class="movies" id="movieGrid"></div>
     </main>
   </div>
 
-  <div class="player" id="player" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="player" id="player">
     <div class="media-wrap" id="playerContent"></div>
-    <button class="closeBtn" onclick="closePlayer()">Kapat ✖</button>
+    <button class="closeBtn" onclick="closePlayer()">Sluiten ✖</button>
   </div>
 
-  <!-- HLS.js -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <script>
     const movies = [
-      { title:"Voorbeeld HDGO", cover:"https://od.lk/s/NzJfNDc2NjA0NTFf/film.png?random=1", category:"film", url:"http://online.hdgo.site/player30/playerjs.html?file=https://tv-trt1.medya.trt.com.tr/master.m3u8" },
-    { title:"Voorbeeld HDGO", cover:"https://od.lk/s/NzJfNDc2NjA0NTFf/film.png?random=1", category:"film", url:"http://online.hdgo.site/player30/playerjs.html?file=https://rnttwmjcin.turknet.ercdn.net/lcpmvefbyo/atv/atv.m3u8" },
-      { title:"YouTube Voorbeeld", cover:"https://od.lk/s/NzJfNDc2NjA0NDZf/youtube.png", category:"youtube", url:"https://www.youtube.com/watch?v=6N8_r2uwLEc" }
-      // ... jouw bestaande items blijven
+      { title:"Voorbeeld HDGO", cover:"https://od.lk/s/NzJfNDc2NjA0NTFf/film.png", category:"film", url:"http://online.hdgo.site/player30/playerjs.html?file=https://example.com/test.m3u8" },
+      { title:"YouTube Test", cover:"https://od.lk/s/NzJfNDc2NjA0NDZf/youtube.png", category:"youtube", url:"https://www.youtube.com/watch?v=6N8_r2uwLEc" },
+      { title:"HLS Stream", cover:"https://od.lk/s/NzJfNDc2NjA0NTFf/film.png", category:"film", url:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8" }
     ];
 
     const grid = document.getElementById('movieGrid');
     const player = document.getElementById('player');
     const playerContent = document.getElementById('playerContent');
-    const sideMenu = document.getElementById('sideMenu');
-    const hamburger = document.querySelector('.hamburger');
     let hls;
 
     function renderMovies(list){
@@ -106,12 +87,8 @@
       list.forEach(m=>{
         const div=document.createElement('div');
         div.className='card';
-        div.innerHTML=`
-          <img src="${m.cover}" alt="${m.title}">
-          <div class="info"><h3 title="${m.title}">${m.title}</h3></div>
-        `;
-        div.onclick=()=> openPlayer(m);
-        div.onkeydown = (e) => { if(e.key === 'Enter' || e.key === ' ') openPlayer(m) };
+        div.innerHTML=`<img src="${m.cover}" alt="${m.title}"><div class="info"><h3>${m.title}</h3></div>`;
+        div.onclick=()=>openPlayer(m);
         grid.appendChild(div);
       });
     }
@@ -123,75 +100,63 @@
 
     function openPlayer(movie){
       player.style.display='flex';
-      player.setAttribute('aria-hidden','false');
       playStream(movie.url);
-      sideMenu.classList.remove('show');
-      hamburger.setAttribute('aria-expanded','false');
     }
 
     function closePlayer(){
       player.style.display='none';
-      player.setAttribute('aria-hidden','true');
       if(hls){hls.destroy();hls=null;}
-      playerContent.innerHTML = "";
+      playerContent.innerHTML='';
     }
 
     function playStream(url){
-      playerContent.innerHTML = "";
+      playerContent.innerHTML="";
 
+      // YouTube
       if(url.includes("youtube.com") || url.includes("youtu.be")){
         const videoId = extractYoutubeId(url);
-        const iframe = document.createElement('iframe');
-        iframe.setAttribute('src', `https://www.youtube.com/embed/${videoId}?autoplay=1`);
-        iframe.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
-        iframe.setAttribute('allowfullscreen', '');
+        const iframe = document.createElement("iframe");
+        iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+        iframe.allow = "autoplay; encrypted-media; fullscreen; picture-in-picture";
+        iframe.allowFullscreen = true;
         playerContent.appendChild(iframe);
-
-      } else if(url.includes("online.hdgo.site/player30/playerjs.html?file=")){
-        const iframe = document.createElement('iframe');
-        iframe.setAttribute('src', url + "&autoplay=1");
-        iframe.setAttribute('allow', 'autoplay; fullscreen');
-        iframe.setAttribute('allowfullscreen', '');
+      }
+      // HDGO player (altijd iframe -> werkt mobiel)
+      else if(url.includes("online.hdgo.site/player30/playerjs.html?file=")){
+        const iframe = document.createElement("iframe");
+        iframe.src = url + "&autoplay=1";
+        iframe.allow = "autoplay; fullscreen";
+        iframe.allowFullscreen = true;
         playerContent.appendChild(iframe);
-
-      } else {
+      }
+      // HLS streams
+      else {
         const video = document.createElement("video");
         video.controls = true;
+        video.autoplay = true;
         video.playsInline = true;
         playerContent.appendChild(video);
 
-        if(hls){hls.destroy();hls=null;}
         if(video.canPlayType('application/vnd.apple.mpegurl')){
           video.src=url;
-          video.play().catch(()=>{});
         } else if(Hls.isSupported()){
           hls = new Hls();
           hls.loadSource(url);
           hls.attachMedia(video);
-          hls.on(Hls.Events.MANIFEST_PARSED, ()=> video.play().catch(()=>{}));
         } else {
-          alert("HLS wordt niet ondersteund in deze browser.");
+          alert("HLS niet ondersteund.");
         }
       }
     }
 
     function extractYoutubeId(url){
-      let id = "";
-      if(url.includes("youtube.com/watch?v=")){
-        id = url.split("v=")[1].split("&")[0];
-      } else if(url.includes("youtu.be/")){
-        id = url.split("youtu.be/")[1].split("?")[0];
-      } else {
-        const parts = url.split('/');
-        id = parts[parts.length-1].split('?')[0];
-      }
-      return id;
+      if(url.includes("v=")) return url.split("v=")[1].split("&")[0];
+      if(url.includes("youtu.be/")) return url.split("youtu.be/")[1].split("?")[0];
+      return "";
     }
 
     function toggleMenu(){
-      const isShown = sideMenu.classList.toggle("show");
-      sideMenu.setAttribute('aria-hidden', !isShown);
-      hamburger.setAttribute('aria-expanded', isShown);
+      document.getElementById("sideMenu").classList.toggle("show");
     }
 
     renderMovies(movies);
