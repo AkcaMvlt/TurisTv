@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mediaplayer met Hamburger Categorieën</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(160deg, #1e293b, #0f172a);
+    }
+    iframe {
+      background: black;
+    }
+    .menu-hidden {
+      transform: translateX(-100%);
+    }
+    .active-category {
+      background-color: #2563eb !important; /* blauwe highlight */
+      color: white !important;
+    }
+  </style>
+</head>
+<body class="text-white font-sans">
+
+  <!-- Header -->
+  <header class="flex justify-between items-center p-4 bg-gray-900 sticky top-0 z-50">
+    <!-- Hamburger -->
+    <button id="menuToggle" class="text-2xl">&#9776;</button>
+ 
+  </header>
+
+  <!-- Zijmenu categorieën -->
+  <nav id="sideMenu" class="fixed top-0 left-0 h-full w-64 bg-gray-800 shadow-xl z-40 p-5 transition-transform menu-hidden">
+    <h2 class="text-xl font-semibold mb-6">Categorieën</h2>
+    <ul class="space-y-4">
+      <li><button class="categoryBtn w-full text-left bg-gray-700 px-4 py-2 rounded-lg" data-category="all">📂 Alle</button></li>
+      <li><button class="categoryBtn w-full text-left bg-gray-700 px-4 py-2 rounded-lg" data-category="ulusal">🌟 Ulusal</button></li>
+      <li><button class="categoryBtn w-full text-left bg-gray-700 px-4 py-2 rounded-lg" data-category="sport">🏆 Sport</button></li>
+      <li><button class="categoryBtn w-full text-left bg-gray-700 px-4 py-2 rounded-lg" data-category="haber">📰 Haberler</button></li>
+      <li><button class="categoryBtn w-full text-left bg-gray-700 px-4 py-2 rounded-lg" data-category="belgesel">🐘 Belgesel</button></li>
+      <li><button class="categoryBtn w-full text-left bg-gray-700 px-4 py-2 rounded-lg" data-category="music">🎵 Muziek</button></li>
+      <li><button class="categoryBtn w-full text-left bg-gray-700 px-4 py-2 rounded-lg" data-category="film">📺 Filmler</button></li>
+      <li><button class="categoryBtn w-full text-left bg-gray-700 px-4 py-2 rounded-lg" data-category="cocuk">🌊 Çocuk</button></li>
+    </ul>
+  </nav>
+
+  <!-- Overlay achter menu -->
+  <div id="overlay" class="fixed inset-0 bg-black/50 z-30 hidden"></div>
+
+  <!-- Player -->
+  <main class="p-4 space-y-10">
+    <div id="playerContainer" class="w-full max-w-3xl mx-auto">
+      <iframe id="playerFrame"
+              src=""
+              class="w-full h-64 sm:h-96 rounded-2xl shadow-2xl border border-gray-700 hidden"
+              frameborder="0"
+              allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+              allowfullscreen></iframe>
+    </div>
+
+    <!-- Kanalen -->
+    <section id="channels" class="space-y-6 max-w-3xl mx-auto">
+
+
+      <!-- Ulusal -->
+      <div class="categoryGroup" data-category="ulusal">
+        <h2 class="text-xl font-semibold mb-3">🌟 Ulusal</h2>
+        <div class="flex flex-col space-y-3">
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://tv-trt1.medya.trt.com.tr/master.m3u8">1. TRT 1</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://rnttwmjcin.turknet.ercdn.net/lcpmvefbyo/atv/atv.m3u8">2. ATV</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://ackaxsqacw.turknet.ercdn.net/ozfkfbbjba/kanald/kanald.m3u8">3. KANAL D</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://emmazbvkkf.turknet.ercdn.net/cnifuowzza/startv/startv.m3u8">4. STAR TV</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://rmtftbjlne.turknet.ercdn.net/bpeytmnqyp/showtv/showtv.m3u8">5. SHOW TV</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://uycyyuuzyh.turknet.ercdn.net/nphindgytw/nowtv/nowtv.m3u8">6. NOW</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://rkhubpaomb.turknet.ercdn.net/fwjkgpasof/tv8/tv8.m3u8">7. TV 8 </button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://rkhubpaomb.turknet.ercdn.net/fwjkgpasof/tv8bucuk/tv8bucuk.m3u8">8. TV 8,5</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://rnttwmjcin.turknet.ercdn.net/lcpmvefbyo/a2tv/a2tv.m3u8">9. A2</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://ceokzokgtd.erbvr.com/tabiitv/tabiitv.m3u8">10. TABII TV</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://ackaxsqacw.turknet.ercdn.net/ozfkfbbjba/teve2/teve2.m3u8">11. TEVE 2</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://yurhnwtpys.turknet.ercdn.net/cvmbjbpmdx/kanal7/kanal7.m3u8">12. KANAL 7</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://rmtftbjlne.turknet.ercdn.net/bpeytmnqyp/showmax/showmax.m3u8">13. SHOWMAX </button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://beyaztv-live.daioncdn.net/beyaztv/beyaztv.m3u8">14. BEYAZ TV</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://turkmedya-live.ercdn.net/tv360/tv360.m3u8">15. TV 360</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://tv-trtturk.medya.trt.com.tr/master.m3u8">16. TRT TÛRK</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://tv-trtavaz.medya.trt.com.tr/master.m3u8">17. TRT AVAZ</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://tv-trt1.medya.trt.com.tr/master.m3u8">18. TRT 2 Ⓖ </button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://tv-trt2.medya.trt.com.tr/master.m3u8">19.TRT 2 Ⓖ</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://tv-trtspor2.medya.trt.com.tr/master.m3u8">20. TRT Spor 2 Ⓖ</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://tv-trtcocuk.medya.trt.com.tr/master.m3u8">21. TRT Çocuk</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://tv-trtmuzik.medya.trt.com.tr/master.m3u8">22. TRT Müzik</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://tv-trtbelgesel.medya.trt.com.tr/master.m3u8">23. TRT Belgesel</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://tv-trtavaz.medya.trt.com.tr/master.m3u8">24. TRT Avaz</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://tv-trtkurdi.medya.trt.com.tr/master.m3u8">25. TRT Kurdî</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://tv-trtarabi.medya.trt.com.tr/master.m3u8">26. TRT Arabi</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://tv-trtworld.medya.trt.com.tr/master.m3u8">27. TRT World</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://tv-trtturk.medya.trt.com.tr/master.m3u8">28. TRT Türk</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://tv-e-okul00.medya.trt.com.tr/master.m3u8">29. TRT EBA Ilkokul</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://tv-e-okul01.medya.trt.com.tr/master.m3u8">30. TRT EBA Ortaokul</button>
+        <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=http://116.202.238.88/TRT1_TR/index.m3u8">31. 🇹🇷  TRT 1 SD</button>
+        <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://tv-trt1.medya.trt.com.tr/master.m3u8 ">32.  🇹🇷 TRT 1 </button>
+        <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://rnttwmjcin.turknet.ercdn.net/lcpmvefbyo/atv/atv.m3u8 ">33.  🇹🇷 ATV </button>
+        <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://ackaxsqacw.turknet.ercdn.net/ozfkfbbjba/kanald/kanald.m3u8 ">34.  🇹🇷  Kanal D</button>
+        <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://emmazbvkkf.turknet.ercdn.net/cnifuowzza/startv/startv.m3u8 ">35.  🇹🇷 Star TV </button>
+        <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://rmtftbjlne.turknet.ercdn.net/bpeytmnqyp/showtv/showtv.m3u8 ">36.  🇹🇷 Show TV </button>
+        <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://uycyyuuzyh.turknet.ercdn.net/nphindgytw/nowtv/nowtv.m3u8 ">37.  🇹🇷 Now </button>
+        <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://rkhubpaomb.turknet.ercdn.net/fwjkgpasof/tv8/tv8.m3u8  ">38.  🇹🇷 TV 8 </button>
+        <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://rkhubpaomb.turknet.ercdn.net/fwjkgpasof/tv8bucuk/tv8bucuk.m3u8 ">39.  🇹🇷 TV 8,5 </button>
+        <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://rnttwmjcin.turknet.ercdn.net/lcpmvefbyo/a2tv/a2tv.m3u8 ">40.  🇹🇷 A2 </button>
+        <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://ceokzokgtd.erbvr.com/tabiitv/tabiitv.m3u8 ">41.  🇹🇷 Tabiitv </button>
+        <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://ackaxsqacw.turknet.ercdn.net/ozfkfbbjba/teve2/teve2.m3u8  ">42.  🇹🇷 Teve2 </button>
+        <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://yurhnwtpys.turknet.ercdn.net/cvmbjbpmdx/kanal7/kanal7.m3u8  ">43.  🇹🇷 Kanal 7 </button>
+        <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://rmtftbjlne.turknet.ercdn.net/bpeytmnqyp/showmax/showmax.m3u8 ">44.  🇹🇷 Showmax </button>
+        <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://beyaztv-live.daioncdn.net/beyaztv/beyaztv.m3u8 ">45.  🇹🇷 Beyaztv </button>
+        <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://turkmedya-live.ercdn.net/tv360/tv360.m3u8 TV36">46.  🇹🇷 TV360 </button>
+        <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://tv-trtturk.medya.trt.com.tr/master.m3u8 ">47.  🇹🇷 TRT Turk </button>
+        <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://tv-trtavaz.medya.trt.com.tr/master.m3u8 ">48.  🇹🇷 TRT Avaz </button>
+  
+  
+        </div>
+      </div>
+
+
+
+      <!-- Sport -->
+      <div class="categoryGroup" data-category="sport">
+        <h2 class="text-xl font-semibold mb-3">🏆 Spor</h2>
+        <div class="flex flex-col space-y-3">
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://one.b2a7fa109ef84a6f.click/live/sbeinsports-1/playlist.m3u8 ">1. BEIN SPORT 1</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://one.b2a7fa109ef84a6f.click/live/sbeinsports-2/playlist.m3u8 ">2. BEIN SPORT 2</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://one.b2a7fa109ef84a6f.click/live/sbeinsports-3/playlist.m3u8 ">3. BEIN SPORT 3</button>          
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://one.b2a7fa109ef84a6f.click/live/sbeinsports-4/playlist.m3u8 ">4. BEIN SPORT 4</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://one.b2a7fa109ef84a6f.click/live/sbeinsports-5/playlist.m3u8 ">5. BEIN SPORT 5</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://one.b2a7fa109ef84a6f.click/live/sbeinsportsmax-1/playlist.m3u8 ">6. SPORT MAX 1</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://one.b2a7fa109ef84a6f.click/live/sbeinsportsmax-2/playlist.m3u8 ">7. SPORT MAX 2</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://one.b2a7fa109ef84a6f.click/live/stivibuspor-1/playlist.m3u8 ">8. TIVIBU 1</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://one.b2a7fa109ef84a6f.click/live/stivibuspor-2/playlist.m3u8 ">9. TIVIBU 2</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://one.b2a7fa109ef84a6f.click/live/stivibuspor-3/playlist.m3u8 ">10. TIVIBU 3</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://one.b2a7fa109ef84a6f.click/live/stivibuspor-4/playlist.m3u8 ">11. TIVIBU 4</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://one.b2a7fa109ef84a6f.click/live/sssport/playlist.m3u8 ">12. S SPOR</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://one.b2a7fa109ef84a6f.click/live/sssport2/playlist.m3u8 ">13. S SPOR 2</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://one.b2a7fa109ef84a6f.click/live/sssplus1/playlist.m3u8 ">14. S SPOR +1</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://one.b2a7fa109ef84a6f.click/live/sssplus2/playlist.m3u8 ">15. S SPOR +2</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://one.b2a7fa109ef84a6f.click/live/ssmartspor/playlist.m3u8 ">16. SMART 1</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://one.b2a7fa109ef84a6f.click/live/ssmartspor2/playlist.m3u8 S">17. MART 2</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://one.b2a7fa109ef84a6f.click/live/seurosport1/playlist.m3u8 ">18. EUROSPORT 1</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://one.b2a7fa109ef84a6f.click/live/seurosport2/playlist.m3u8 ">19. Eurosport 2</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://one.b2a7fa109ef84a6f.click/live/saspor/playlist.m3u8  ">20. Aspor</button>
+   
+
+
+
+
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+
+      <!-- Haber -->
+      <div class="categoryGroup" data-category="haber">
+        <h2 class="text-xl font-semibold mb-3">📰 Haberler</h2>
+        <div class="flex flex-col space-y-3">
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://izle.canlitvapp.com/sozcu/index.m3u8 ">1.SÔZCÛ TV</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://halktv-live.daioncdn.net/halktv/halktv.m3u8 ">2.HALK TV</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://tele1-live.ercdn.net/tele1/tele1.m3u8 ">3.TELE 1</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://flashhaber-live.ercdn.net/flashhaber/flashhaber.m3u8 ">4.FLASHABER</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://dogus-live.daioncdn.net/ntv/ntv_720p.m3u8 ">5.NTV</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://bloomberght-live.daioncdn.net/bloomberght/bloomberght.m3u8 ">6.BLOOMBERGHT</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://ekoltv-live.ercdn.net/ekoltv/ekoltv.m3u8 ">7.EKOL TV</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://ensonhaber-live.ercdn.net/haberglobal/haberglobal.m3u8 ">8.HABER GLOBAL</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://tv-trthaber.medya.trt.com.tr/master.m3u8 ">9.TRT HABER</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://rmtftbjlne.turknet.ercdn.net/bpeytmnqyp/haberturktv/haberturktv.m3u8 ">10.HABER TÛRK</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://tv100-live.daioncdn.net/tv100/tv100.m3u8 ">11.TV100</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://tv.ensonhaber.com/tv24/tv24_1080p.m3u8 ">12.TV24</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://turkmedya-live.ercdn.net/tv24/tv24.m3u8 ">13.TV24</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://edge1.socialsmart.tv/turkhaber/bant1/playlist.m3u8 ">14.Türk Haber</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://turkmedya-live.ercdn.net/tv24/tv24_360p.m3u8 ">15.24 TV HD</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=http://akittv-live.ercdn.net/akittv/akittv_360p.m3u8 ">16.AKIT TV</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://cdn-haber61tv.yayin.com.tr/haber61tv/smil:haber61tv.smil/playlist.m3u8 ">17.HABER 61</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://tv-trthaber.medya.trt.com.tr/master_360.m3u8 ">18.TRT HABER</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://trn03.tulix.tv/gt-haberglobal/index.m3u8 ">19.HABER GLOBAL</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://edge1.socialsmart.tv/turkhaber/bant1/playlist.m3u8 ">20.TÜRK HABER</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://tv-trtturk.medya.trt.com.tr/master_360.m3u8 ">21.TRT-TURK</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://tv-trtworld.medya.trt.com.tr/master_360.m3u8 ">22.TRT WORLD</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://trn03.tulix.tv/gt-benguturk/index.m3u8 ">23.BENGÜTÜRK</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://turkmedya-live.ercdn.net/tv24/tv24.m3u8 ">24.24 TV</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://tv-trtturk.medya.trt.com.tr/master_360.m3u8 ">25.TRT TÜRK</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://meclistv-live.ercdn.net/meclistv/meclistv.m3u8 ">26.MECLİS TV</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://trn03.tulix.tv/gt-tv100/index.m3u8 ">27.TV100</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://livetv.radyotvonline.net/kanal7live/ulketv/playlist.m3u8 ">28.ÜLKE TV</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://izle.canlitvapp.com/sozcu/index.m3u8 ">29. Sözcü tv</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://halktv-live.daioncdn.net/halktv/halktv.m3u8 ">30. Halktv</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://tele1-live.ercdn.net/tele1/tele1.m3u8 ">31. Tele1</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://flashhaber-live.ercdn.net/flashhaber/flashhaber.m3u8 ">32. Flashhaber</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://dogus-live.daioncdn.net/ntv/ntv_720p.m3u8 ">33. Ntv</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://bloomberght-live.daioncdn.net/bloomberght/bloomberght.m3u8 ">34. Bloomberght</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://ekoltv-live.ercdn.net/ekoltv/ekoltv.m3u8 ">35. Ekoltv</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://ensonhaber-live.ercdn.net/haberglobal/haberglobal.m3u8 ">36. Haberglobal</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://tv-trthaber.medya.trt.com.tr/master.m3u8 ">37. TRT Haber</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://rmtftbjlne.turknet.ercdn.net/bpeytmnqyp/haberturktv/haberturktv.m3u8 ">38. Haberturk</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://tv100-live.daioncdn.net/tv100/tv100.m3u8 ">39. TV100</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://tv.ensonhaber.com/tv24/tv24_1080p.m3u8 ">40. TV24</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://turkmedya-live.ercdn.net/tv24/tv24.m3u8 ">41. TV24</button>
+  
+
+
+
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+
+
+
+
+
+      <!-- Film -->
+      <div class="categoryGroup" data-category="film">
+        <h2 class="text-xl font-semibold mb-3">📰 Filmler</h2>
+        <div class="flex flex-col space-y-3">
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://ancient-shape-c20a.yedekbirkankam.workers.dev/https://tv1.arectv30.sbs/live/mvturk.m3u8 ">1. MOVIE SMART TÛRK</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://ancient-shape-c20a.yedekbirkankam.workers.dev/https://tv1.arectv30.sbs/live/sinemaaile2.m3u8 ">2. SINEMA AILE 2</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://ancient-shape-c20a.yedekbirkankam.workers.dev/https://tv1.arectv30.sbs/live/sinemaaksiyon.m3u8 ">3. SINEMA AKSIYON</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://ancient-shape-c20a.yedekbirkankam.workers.dev/https://tv1.arectv30.sbs/live/sinemaaksiyon2.m3u8 ">4. SINEMA AKSIYON 2</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://ancient-shape-c20a.yedekbirkankam.workers.dev/https://tv1.arectv30.sbslive/sinemakomedi.m3u8 ">5. SINEMA KOMEDI</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://ancient-shape-c20a.yedekbirkankam.workers.dev/https://tv1.arectv30.sbs/live/bsstars.m3u8 ">6. BEINMOVIE SMART</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://ancient-shape-c20a.yedekbirkankam.workers.dev/https://tv1.arectv30.sbs/live/bsturk.m3u8 ">7. BEINMOVIE TÛRK</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://ancient-shape-c20a.yedekbirkankam.workers.dev/https://tv1.arectv30.sbs/live/bspremier1.m3u8 ">8. BEINMOVIE PREMIERE 1</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://ancient-shape-c20a.yedekbirkankam.workers.dev/https://tv1.arectv30.sbs/live/bsfamily.m3u8  ">9. BEINMOVIE FAMILY</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://ancient-shape-c20a.yedekbirkankam.workers.dev/https://tv1.arectv30.sbs/live/box1.m3u8 ">10.BOXOFFICE 1</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://ancient-shape-c20a.yedekbirkankam.workers.dev/https://tv1.arectv30.sbs/live/box2.m3u8 ">11.BOXOFFICE 2</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://ancient-shape-c20a.yedekbirkankam.workers.dev/https://tv1.arectv30.sbs/live/box3.m3u8 ">12. BOXOFFICE 3</button>
+ 
+  
+ 
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+
+
+      <!-- Belgesel -->
+      <div class="categoryGroup" data-category="belgesel">
+        <h2 class="text-xl font-semibold mb-3">🐘 Belgesel</h2>
+        <div class="flex flex-col space-y-3">
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://emmazbvkkf.turknet.ercdn.net/cnifuowzza/tlc/tlc.m3u8 ">1.🐘 TLC</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://emmazbvkkf.turknet.ercdn.net/cnifuowzza/dmax/dmax.m3u8 ">2.🐘 DMAX</button>
+ 
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://emmazbvkkf.turknet.ercdn.net/cnifuowzza/tlc/tlc.m3u8 ">3. Tlc </button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://emmazbvkkf.turknet.ercdn.net/cnifuowzza/dmax/dmax.m3u8 ">4. Dmax</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://tv-trtbelgesel.medya.trt.com.tr/master.m3u8 ">5. TRT Belgesel</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://ancient-shape-c20a.yedekbirkankam.workers.dev/https://tv1.arectv30.sbs/live/tarihtv.m3u8 ">6. Tarihtv</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://ancient-shape-c20a.yedekbirkankam.workers.dev/https://tv1.arectv30.sbs/live/bbc.m3u8 ">7. BBC</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://ancient-shape-c20a.yedekbirkankam.workers.dev/https://tv1.arectv30.sbs/live/viasathistory.m3u8 ">8. Viasathistory</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://ancient-shape-c20a.yedekbirkankam.workers.dev/https://tv1.arectv30.sbs/live/viasatexplore.m3u8 ">9. Viasatexplore</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://ancient-shape-c20a.yedekbirkankam.workers.dev/https://tv1.arectv30.sbs/live/history.m3u8 ">10. History</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://ancient-shape-c20a.yedekbirkankam.workers.dev/https://tv1.arectv30.sbs/live/discovery.m3u8 ">11. Discovery</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://ancient-shape-c20a.yedekbirkankam.workers.dev/https://tv1.arectv30.sbs/live/natgeo.m3u8 ">12. Natgeo</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://ancient-shape-c20a.yedekbirkankam.workers.dev/https://tv1.arectv30.sbs/live/natgeowild.m3u8 ">13. Natgeowild</button>
+        
+
+
+
+        </div>
+      </div>
+
+
+
+      <!-- Cocuk -->
+      <div class="categoryGroup" data-category="cocuk">
+        <h2 class="text-xl font-semibold mb-3">🌊 Cocuk</h2>
+        <div class="flex flex-col space-y-3">
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://rnttwmjcin.turknet.ercdn.net/lcpmvefbyo/minikago_cocuk/minikago_cocuk.m3u8 ">1. MINIKA COCUK</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://rnttwmjcin.turknet.ercdn.net/lcpmvefbyo/minikago/minikago.m3u8 ">2. MINIKA GO</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://tv.arectv34.sbs/live/cartoonnetwork.m3u8 ">3. CARTOON NETWORK</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://tv-trtcocuk.medya.trt.com.tr/master.m3u8 ">4. TRT ÇOCUK</button>
+   
+ 
+        </div>
+      </div>
+
+
+
+
+
+
+
+
+
+      <!-- Muziek -->
+      <div class="categoryGroup" data-category="music">
+        <h2 class="text-xl font-semibold mb-3">🎵 Muziek</h2>
+        <div class="flex flex-col space-y-3">
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://listen.powerapp.com.tr/pturkslow/slow.smil/playlist.m3u8">1. TURKSLOW</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://dogus-live.daioncdn.net/kralpoptv/kralpoptv_360p.m3u8">2.  KRALPOP TV SD</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://dogus-live.daioncdn.net/kralpoptv/kralpoptv_720p.m3u8">3.  KralPOP</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://tv-trtmuzik.medya.trt.com.tr/master_360.m3u8">4. TRT MUZiK</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://listen.powerapp.com.tr/pturkslow/slow.smil/playlist.m3u8 ">5. POWER TURK SLOW</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://listen.powerapp.com.tr/pturktaptaze/taptaze.smil/playlist.m3u8 ">6. POWER TURK TAPTAZE</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=http://live.m2.tv/hls3/720/stream.m3u8 ">7. М2 HD</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=http://ocko-live.ssl.cdn.cra.cz/channels/ocko_expres/playlist/cze/live_hq.m3u8 ">8. Ocko Expres</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=http://ocko-live.ssl.cdn.cra.cz/channels/ocko_gold/playlist/cze/live_hq.m3u8 ">9. Ocko Star</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=http://ocko-live.ssl.cdn.cra.cz/channels/ocko/playlist/cze/live_hq.m3u8 ">10. Ocko TV</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=http://cm.hostlagarto.com:8081/hits360tv/hits360HD.myStream/playlist.m3u8 ">11. Ocko Gold</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://muzzik-live.morescreens.com/mts-3/playlist.m3u8 ">12. Muzzik Cafe&Club Serbia</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://muzzik-live.morescreens.com/mts-a4/playlist.m3u8 ">13. MUZZIK HIP-HOP</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=http://178.33.224.197:1935/euroindiemusic/euroindiemusic/playlist.m3u8">14. Euro Indie Music</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://edge15.vedge.infomaniak.com/livecast/tvm3/chunklist_w678388921.m3u8 ">15. TVM 3</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://lightning-now70s-samsungnz.amagi.tv/playlist.m3u8 ">16. Now 70's</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://lightning-now80s-samsungnz.amagi.tv/playlist.m3u8 ">17. Now 80's</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://lightning-now90s-samsungnz.amagi.tv/playlist.m3u8 ">18. Now 90's</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=http://k3.usastreams.com/CableLatino/88stereo/playlist.m3u8 ">19. 88 STEREO TV</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://56b50ada2d659.streamlock.net/LoveFM/livestream/playlist.m3u8 ">20. Radio Love FM</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://5929b138b139d.streamlock.net/RadioIbizaTV/livestream/chunklist_w1014685428.m3u8 ">21. Radio Ibiza TV</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=http://5db313b643fd8.streamlock.net:1935/HITTV/HITTV/chunklist.m3u8 ">22. Vuemme TV</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://5db313b643fd8.streamlock.net:443/SUPERSIXLombardia/SUPERSIXLombardia/playlist.m3u8 ">23. Super Six</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://59253971be783.streamlock.net/KKTV01/livestream/playlist.m3u8 ">24 Kiss Kiss Italia HD</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://58f12ffd2447a.streamlock.net/KKTVNapoli/livestream/playlist.m3u8 ">25. Kiss Kiss Napoli HD</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://stream.ecable.tv/afrobeats/tracks-v1a1/mono.m3u8 ">26. Afrobeats TV</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=http://ocko-live.ssl.cdn.cra.cz/channels/ocko/playlist/cze/live_hq.m3u8 ">27. ÓČKO HITY</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://company.fluid.stream/CompanyTV/smil:Company_ALL.smil/playlist_slita.m3u8 ">28. Company TV</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=http://streamer.rtcommufa.ru:1935/ptica/ptica1/chunklist.m3u8 ">29. Жар Птица</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file= ">🎵 </button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=http://web.onair-radio.eu:1935/video/video/chunklist.m3u8">30. Music Reload TV HD</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=http://web.onair-radio.eu:1935/video/video/chunklist_w1235825277.m3u8 ">31. Reload Radio Music</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://lightning-traceurban-samsungau.amagi.tv/playlist1080p.m3u8 ">32. Trace Urban HD</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://playout395.livestreamingcdn.com/live/Stream1/chunklist_w523424868.m3u8 ">33. Kayhan Afghan</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=http://web.onair-radio.eu:1935/Alpha-Host/Alpha-Host/chunklist_w1284330867.m3u8 ">34. On Air TV</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=http://service-stitcher.clusters.pluto.tv/stitch/hls/channel/5d93b635b43dd1a399b39eee/master.m3u8?sid=0885&deviceId=5d93b635b43dd1a399b39eee&deviceVersion=DNT&appVersion=DNT&deviceType=web&deviceMake=web&advertisingId=&deviceLat=&deviceLon=&deviceDNT=1&deviceModel=web&userId=&app_name=&appName=web&serverSideAds=false&buildVersion=&architecture=&appStoreUrl=&includeExtendedEvents=false&terminate=false&marketingRegion=US ">34. VEVO Pop (USA) </button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://livetv.powerapp.com.tr/powerTV/powerhd.smil/playlist.m3u8 ">35. Power TV</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://livetv.powerapp.com.tr/powerturkTV/powerturkhd.smil/playlist.m3u8 ">36. PowerTürk TV</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://listen.powerapp.com.tr/dance/dance.smil/playlist.m3u8  ">37. Power Dance</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://listen.powerapp.com.tr/plove/love.smil/playlist.m3u8 ">38. Power Love</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://listen.powerapp.com.tr/pturkslow/slow.smil/playlist.m3u8 ">39. PowerTürk Slow</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://listen.powerapp.com.tr/pturktaptaze/taptaze.smil/playlist.m3u8 ">40. PowerTürk Taptaze</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://listen.powerapp.com.tr/pturkakustik/akustik.smil/playlist.m3u8 ">41. PowerTürk Akustik</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://cdnlive.myspirit.tv/LS-ATL-43240-2/index.m3u8 ">42. Spirit TV</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=http://bitcdn-kronehit.bitmovin.com/v2/hls/chunklist_b3128000.m3u8 ">42. Kronehit TV</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://muzzik-live.morescreens.com/mts-3/playlist.m3u8 ">43. Muzzik Cafe&Club</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://muzzik-live.morescreens.com/mts-a4/playlist.m3u8 ">44. Muzzik HipHop</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://muzzik-live.morescreens.com/mts-4/playlist.m3u8 ">45. Muzzik Jeka</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://muzzik-live.morescreens.com/mts-a5/playlist.m3u8 ">46. Muzzik Mediteraneo</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://muzzik-live.morescreens.com/mts-2/playlist.m3u8 ">47. Muzzik OKK</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://muzzik-live.morescreens.com/mts-1/playlist.m3u8 ">48. Muzzik Rock&Roll</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://muzzik-live.morescreens.com/mts-6/playlist.m3u8 ">49. Muzzik TV</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://muzzik-live.morescreens.com/mts-5/playlist.m3u8 ">50. Muzzik Worldwide</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://eu-nl-012.worldcast.tv/dancetelevisionone/2/dancetelevisionone.m3u8 ">51. Best of Dance TV</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://dpp-qmusicnl-live.akamaized.net/streamx/QmusicNL.m3u8 ">52. QMUSIC</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=http://tv.nrg91.gr:1935/onweb/live/master.m3u8 ">53 NRG 91 Music HD</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://hls-03-video.webcaramba.com/rutv/live_1080/index.m3u8 ">54. RU TV</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=http://chanson-video.hostingradio.ru:8080/hls/chansonabr/live_hiq/index.m3u8 ">55. Радио Шансон</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=http://live-maidantv.cdnvideo.ru/maidantv/maidantv.smil/playlist.m3u8 ">56. Meidan TV HD</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://tv-trtmuzik.medya.trt.com.tr/master.m3u8 ">57. TRT MÛZIK</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://listen.powerapp.com.tr/pturktaptaze/taptaze.smil/playlist.m3u8 ">58. NR1 TÛRK</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://livetv.powerapp.com.tr/powerTV/powerhd.smil/playist.m3u8 ">59. POWER</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://listen.powerapp.com.tr/pturkakustik/akustik.smil/playlist.m3u8 ">60. POWER TÛRK</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://ancient-shape-c20a.yedekbirkankam.workers.dev/https://live.duhnet.tv/S2/HLS_LIVE/dreamturknp/playlist.m3u8 ">61. DREAMTÛRK</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://livetv.powerapp.com.tr/powerTV/powerhd.smil/playlist.m3u8 ">62. Power TV</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://livetv.powerapp.com.tr/powerturkTV/powerturkhd.smil/playlist.m3u8 ">63. PowerTürk TV</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://listen.powerapp.com.tr/dance/dance.smil/playlist.m3u8 ">64. Power Dance</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://listen.powerapp.com.tr/plove/love.smil/playlist.m3u8 ">65. Power Love</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://listen.powerapp.com.tr/pturkslow/slow.smil/playlist.m3u8 ">66. PowerTürk Slow</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://listen.powerapp.com.tr/pturktaptaze/taptaze.smil/playlist.m3u8 ">67. PowerTürk Taptaze</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://listen.powerapp.com.tr/pturkakustik/akustik.smil/playlist.m3u8 ">68. PowerTürk Akustik</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://dogus-live.daioncdn.net/kralpoptv/kralpoptv_360p.m3u8 ">69. KRALPOP</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://dogus-live.daioncdn.net/kralpoptv/kralpoptv_720p.m3u8 ">70. KralPOP</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://tv-trtmuzik.medya.trt.com.tr/master_360.m3u8 ">71. TRT MUZiK</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://listen.powerapp.com.tr/pturkslow/slow.smil/playlist.m3u8 ">72. POWER TURK SLOW</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://listen.powerapp.com.tr/pturktaptaze/taptaze.smil/playlist.m3u8 ">73. POWER TURK TAPTAZE</button>
+          <button class="channelCard bg-gray-800/70 rounded-xl p-4 hover:bg-gray-700 transition" 
+                  data-url="http://online.hdgo.site/player30/playerjs.html?file=https://live.duhnet.tv/S2/HLS_LIVE/dreamturknp/playlist.m3u8 ">74. DREAM TURK</button>
+  
+        </div>
+      </div>
+
+
+
+
+    </section>
+  </main>
+
+  <script>
+    const menuToggle = document.getElementById("menuToggle");
+    const sideMenu = document.getElementById("sideMenu");
+    const overlay = document.getElementById("overlay");
+    const playerFrame = document.getElementById("playerFrame");
+    const playerContainer = document.getElementById("playerContainer");
+
+    // Menu open/close
+    menuToggle.addEventListener("click", () => {
+      sideMenu.classList.toggle("menu-hidden");
+      overlay.classList.toggle("hidden");
+    });
+    overlay.addEventListener("click", () => {
+      sideMenu.classList.add("menu-hidden");
+      overlay.classList.add("hidden");
+    });
+
+    // Helper: vraag fullscreen aan (met vendor prefixes)
+    function requestFullscreenOn(el) {
+      if (!el) return;
+      try {
+        if (el.requestFullscreen) {
+          el.requestFullscreen();
+        } else if (el.webkitRequestFullscreen) { /* Safari */
+          el.webkitRequestFullscreen();
+        } else if (el.mozRequestFullScreen) { /* Firefox */
+          el.mozRequestFullScreen();
+        } else if (el.msRequestFullscreen) { /* IE/Edge */
+          el.msRequestFullscreen();
+        } else {
+          console.warn("Fullscreen API niet ondersteund");
+        }
+      } catch (err) {
+        console.warn("Fullscreen aanvraag mislukt:", err);
+      }
+    }
+
+    // Kanaal afspelen + direct fullscreen (desktop)
+    function changeChannel(url) {
+      const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+
+      if (isMobile) {
+        // Mobiel: open in nieuw tab (bestaande gedrag)
+        window.open(url + "&autoplay=1", "_blank");
+      } else {
+        // Desktop: laad in iframe en vraag fullscreen aan
+        playerFrame.classList.remove("hidden");
+        // zorg dat iframe fullscreen mag — already set via allow and allowfullscreen attribute
+        playerFrame.src = url + "&autoplay=1";
+
+        // korte timeout zodat de browser het click-gesture associeert met fullscreen-aanvraag
+        setTimeout(() => {
+          // probeer fullscreen op het iframe zelf
+          requestFullscreenOn(playerFrame);
+
+          // scroll naar player (optioneel)
+          try {
+            playerContainer.scrollIntoView({ behavior: "smooth", block: "start" });
+          } catch (e) {
+            // fallback: niets
+          }
+        }, 120);
+      }
+    }
+
+    // Kanaal klik events
+    document.querySelectorAll(".channelCard").forEach(card => {
+      card.addEventListener("click", () => changeChannel(card.dataset.url));
+    });
+
+    // Categorie filter + opslag
+    function selectCategory(category) {
+      // Opslaan in localStorage
+      localStorage.setItem("selectedCategory", category);
+
+      // Highlight knoppen
+      document.querySelectorAll(".categoryBtn").forEach(b => {
+        b.classList.remove("active-category");
+        if (b.dataset.category === category) {
+          b.classList.add("active-category");
+        }
+      });
+
+      // Filter kanalen
+      document.querySelectorAll(".categoryGroup").forEach(group => {
+        if (category === "all" || group.dataset.category === category) {
+          group.style.display = "block";
+        } else {
+          group.style.display = "none";
+        }
+      });
+    }
+
+    document.querySelectorAll(".categoryBtn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        selectCategory(btn.dataset.category);
+
+        // Menu sluiten
+        sideMenu.classList.add("menu-hidden");
+        overlay.classList.add("hidden");
+      });
+    });
+
+    // Laatst gekozen categorie onthouden
+    window.addEventListener("load", () => {
+      const saved = localStorage.getItem("selectedCategory") || "all";
+      selectCategory(saved);
+    });
+
+    // Optioneel: luisteren naar exit-fullscreen (kun je gebruiken om UI terug te zetten)
+    document.addEventListener("fullscreenchange", () => {
+      if (!document.fullscreenElement) {
+        // fullscreen verlaten — eventueel verberg de iframe weer of pas UI aan
+        // playerFrame.classList.add("hidden"); // uncomment als je de player wil verbergen na exit
+      }
+    });
+  </script>
+</body>
+</html>
