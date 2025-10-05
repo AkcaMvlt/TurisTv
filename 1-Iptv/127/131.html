@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Turis Tv — VLC only mobile</title>
+
+  <style>
+    :root{
+      --bg:#0a0f1c;
+      --card:#12192e;
+      --accent:#06b6d4;
+      --gap:12px;
+      --card-radius:10px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:#fff}
+    header{
+      background:var(--card);
+      padding:10px 14px;
+      display:flex;align-items:center;justify-content:space-between;
+      position:sticky;top:0;z-index:50;
+    }
+    .brand{display:flex;align-items:center;gap:8px}
+    .brand img{width:34px;height:34px;border-radius:6px;object-fit:cover}
+    .brand h1{font-size:17px;margin:0}
+    .hamburger{background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:6px;border-radius:6px}
+
+    .container{display:grid;grid-template-columns:220px 1fr;gap:var(--gap);padding:14px}
+    nav{background:var(--card);border-radius:var(--card-radius);padding:10px}
+    nav ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:4px}
+    nav li{padding:8px 10px;border-radius:6px;cursor:pointer;font-size:14px}
+    nav li:hover{background:#1f2a49}
+
+    .movies{display:grid;grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));gap:var(--gap)}
+    .card{background:var(--card);border-radius:var(--card-radius);overflow:hidden;cursor:pointer;display:flex;flex-direction:column}
+    .card img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block}
+    .card .info{padding:6px}
+    .card .info h3{margin:0;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+    .player{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);display:none;align-items:center;justify-content:center;flex-direction:column;z-index:1000;padding:20px}
+    .player .media-wrap{width:95%;max-width:1000px}
+    .player iframe,.player video{width:100%;aspect-ratio:16/9;border-radius:8px;display:block}
+    .closeBtn{margin-top:12px;padding:5px 10px;border:none;border-radius:6px;background:var(--accent);color:#000;font-weight:700;cursor:pointer}
+
+    /* Mobiel: ico kleiner, raster dichter */
+    @media (max-width:900px){
+      .container{grid-template-columns:1fr;padding:10px}
+      nav{position:fixed;top:56px;left:10px;right:10px;display:none;z-index:999}
+      nav.show{display:block}
+      .brand img{width:28px;height:28px}
+      .brand h1{font-size:15px}
+      .hamburger{font-size:18px;padding:4px}
+      .movies{grid-template-columns:repeat(auto-fill, minmax(110px, 1fr));gap:8px}
+      .card img{aspect-ratio:4/3;max-height:80px}
+      .card .info h3{font-size:11px}
+    }
+    @media (max-width:480px){
+      .movies{grid-template-columns:repeat(3,1fr);gap:6px}
+      .card img{max-height:70px}
+      .card .info{padding:4px}
+      .card .info h3{font-size:10px}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <img src="https://od.lk/s/NzJfNDc2NjczNTdf/bos.png" alt="logo">
+      <h1>Turis Tv</h1>
+    </div>
+    <button class="hamburger" onclick="toggleMenu()">☰</button>
+  </header>
+
+  <div class="container">
+    <nav id="sideMenu">
+      <ul>
+        <li onclick="filterMovies('ulusal');toggleMenu()">Ulusal</li>
+        <li onclick="filterMovies('haber');toggleMenu()">Haber</li>
+        <li onclick="filterMovies('spor');toggleMenu()">Spor</li>
+        <li onclick="filterMovies('youtube');toggleMenu()">YouTube</li>
+        <li onclick="filterMovies('all');toggleMenu()">Alles</li>
+      </ul>
+    </nav>
+
+    <main>
+      <div class="movies" id="movieGrid"></div>
+    </main>
+  </div>
+
+  <div class="player" id="player">
+    <div class="media-wrap" id="playerContent"></div>
+    <button class="closeBtn" onclick="closePlayer()">Sluit ✖</button>
+  </div>
+
+  <script>
+    const movies = [
+
+
+      { title:"🇹🇷 FINEST", cover:"https://od.lk/s/NzJfNDc2NjczNTdf/bos.png", category:"ulusal", url:"http://media.finest.tv/hls/live.m3u8" },
+      { title:"🇹🇷 TRT 1", cover:"https://od.lk/s/NzJfNDc2NjczNTdf/bos.png", category:"ulusal", url:"https://tv-trt1.medya.trt.com.tr/master.m3u8" },
+      { title:"🇹🇷 ATV", cover:"https://od.lk/s/NzJfNDc2NjczNTdf/bos.png", category:"ulusal", url:"https://rnttwmjcin.turknet.ercdn.net/lcpmvefbyo/atv/atv.m3u8" },
+      { title:"CNN TÜRK", cover:"https://od.lk/s/NzJfNDc2Nzg4ODlf/nbnrz.png", category:"youtube", url:"https://www.youtube.com/watch?v=6N8_r2uwLEc" }
+      // ... vul aan met je volledige lijst
+    ];
+
+    const grid=document.getElementById('movieGrid');
+    const player=document.getElementById('player');
+    const playerContent=document.getElementById('playerContent');
+    const sideMenu=document.getElementById('sideMenu');
+
+    function isMobile(){ return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent); }
+    function isYoutube(url){ return url.includes("youtube.com")||url.includes("youtu.be"); }
+
+    function renderMovies(list){
+      grid.innerHTML='';
+      list.forEach(m=>{
+        const div=document.createElement('div');
+        div.className='card';
+        div.innerHTML=`<img src="${m.cover}"><div class="info"><h3>${m.title}</h3></div>`;
+        div.onclick=()=>openPlayer(m);
+        grid.appendChild(div);
+      });
+    }
+    function filterMovies(cat){
+      if(cat==='all') renderMovies(movies);
+      else renderMovies(movies.filter(m=>m.category===cat));
+    }
+    function openPlayer(movie){
+      if(isYoutube(movie.url)){
+        player.style.display='flex';
+        playerContent.innerHTML=`<iframe src="https://www.youtube.com/embed/${extractYoutubeId(movie.url)}?autoplay=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+      } else {
+        if(isMobile()){
+          launchVlc(movie.url);
+        } else {
+          player.style.display='flex';
+          playerContent.innerHTML=`<video src="${movie.url}" controls autoplay style="width:100%;border-radius:8px"></video>`;
+        }
+      }
+      sideMenu.classList.remove("show");
+    }
+    function closePlayer(){ player.style.display='none';playerContent.innerHTML=''; }
+    function extractYoutubeId(url){
+      if(url.includes("v=")) return url.split("v=")[1].split("&")[0];
+      if(url.includes("youtu.be/")) return url.split("youtu.be/")[1].split("?")[0];
+      return url;
+    }
+    function toggleMenu(){ sideMenu.classList.toggle("show"); }
+    function launchVlc(url){
+      const ua=navigator.userAgent;
+      if(/Android/i.test(ua)){
+        let stripped=url.replace(/^https?:\/\//i,'');
+        window.location='intent://'+stripped+'#Intent;scheme=http;package=org.videolan.vlc;end';
+      } else if(/iPhone|iPad|iPod/i.test(ua)){
+        window.location='vlc-x-callback://x-callback-url/stream?url='+encodeURIComponent(url);
+        setTimeout(()=>{ window.location='vlc://'+encodeURIComponent(url); },500);
+      }
+    }
+
+    renderMovies(movies);
+  </script>
+</body>
+</html>
