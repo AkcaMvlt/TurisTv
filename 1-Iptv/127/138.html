@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Turis TV - OPlayer</title>
+  <style>
+    body{background:#0a0f1c;color:#fff;font-family:Arial,sans-serif;padding:20px;}
+    h1{text-align:center;margin-bottom:20px;}
+    ul{list-style:none;padding:0;}
+    li{margin:10px 0;}
+    a{color:#06b6d4;text-decoration:none;font-size:18px;}
+    a:hover{text-decoration:underline;}
+  </style>
+</head>
+<body>
+  <h1>Turis TV Playlist - OPlayer</h1>
+  <ul id="playlist"></ul>
+
+  <script>
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+    const movies = [
+
+    
+      { title:"FiNEST TV", url:"http://media.finest.tv/hls/live.m3u8" },
+      { title:"TRT 1", url:"https://tv-trt1.medya.trt.com.tr/master.m3u8" },
+      { title:"ATV", url:"https://rnttwmjcin.turknet.ercdn.net/lcpmvefbyo/atv/atv.m3u8" },
+      { title:"KANAL D", url:"https://ackaxsqacw.turknet.ercdn.net/ozfkfbbjba/kanald/kanald.m3u8" }
+      // voeg hier je andere streams toe...
+    ];
+
+    const playlist = document.getElementById('playlist');
+
+    movies.forEach(m => {
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+
+      if(isMobile){
+        // Android mobiel opent OPlayer
+        a.href = `oplayer://open?url=${encodeURIComponent(m.url)}`;
+      } else {
+        // Desktop fallback: gewoon link
+        a.href = m.url;
+        a.target="_blank";
+      }
+
+      a.textContent = m.title;
+      li.appendChild(a);
+      playlist.appendChild(li);
+    });
+  </script>
+</body>
+</html>
