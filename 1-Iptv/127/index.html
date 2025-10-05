@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Turis Tv — VLC launch ready</title>
+
+  <!-- favicon voorbeelden -->
+  <link rel="icon" href="favicon.ico" sizes="32x32">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+  <style>
+    :root{
+      --bg:#0a0f1c;
+      --card:#12192e;
+      --accent:#06b6d4;
+      --gap:12px;
+      --card-radius:10px;
+    }
+
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:#fff;-webkit-font-smoothing:antialiased}
+    header{
+      background:var(--card);
+      padding:12px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      position:sticky;top:0;z-index:50;
+    }
+
+    .brand{display:flex;align-items:center;gap:10px}
+    .brand img{width:40px;height:40px;border-radius:8px;object-fit:cover;flex:0 0 40px}
+    .brand h1{font-size:18px;margin:0}
+
+    .hamburger{background:none;border:none;color:#fff;font-size:26px;cursor:pointer;padding:10px;border-radius:8px}
+
+    .container{
+      display:grid;
+      grid-template-columns:240px 1fr;
+      gap:var(--gap);
+      padding:16px;
+      align-items:start;
+    }
+
+    nav{background:var(--card);border-radius:var(--card-radius);padding:12px;min-height:120px}
+    nav h2{font-size:16px;margin:0 0 10px 0}
+    nav ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}
+    nav li{padding:10px;border-radius:8px;cursor:pointer;font-size:14px;user-select:none}
+    nav li:hover{background:#1f2a49}
+
+    .movies{display:grid;grid-template-columns:repeat(auto-fill, minmax(160px, 1fr));gap:var(--gap)}
+
+    .card{background:var(--card);border-radius:var(--card-radius);overflow:hidden;cursor:pointer;display:flex;flex-direction:column;transition:transform 0.15s, box-shadow 0.15s;-webkit-tap-highlight-color: transparent}
+    .card:active{transform:scale(0.995)}
+    .card:hover{transform:translateY(-4px)}
+    .card img{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;display:block}
+    .card .info{padding:10px}
+    .card .info h3{margin:0;font-size:15px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+    .player{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);display:none;align-items:center;justify-content:center;flex-direction:column;z-index:1000;padding:20px}
+    .player .media-wrap{width:95%;max-width:1000px;background:transparent;border-radius:12px;display:flex;align-items:center;justify-content:center}
+    .player iframe, .player video{width:100%;height:auto;aspect-ratio:16/9;border-radius:10px;display:block;max-height:80vh}
+    .closeBtn{margin-top:14px;padding:5px 10px;border:none;border-radius:8px;background:var(--accent);color:#000;font-weight:700;cursor:pointer}
+
+    @media (max-width: 900px){
+      .container{grid-template-columns:1fr;padding:12px;gap:10px}
+      nav{position:fixed;top:64px;left:12px;right:12px;z-index:999;display:none;padding:12px}
+      nav.show{display:block}
+      .brand h1{font-size:16px}
+      .brand img{width:36px;height:36px}
+      .movies{grid-template-columns:repeat(auto-fill, minmax(140px, 1fr))}
+      .card .info h3{font-size:8px}
+      .hamburger{font-size:13px;padding:2px}
+    }
+
+    @media (max-width:480px){
+      header{padding:10px}
+      .brand img{width:32px;height:32px}
+      .brand h1{font-size:15px}
+      .card img{aspect-ratio: 4/3}
+      .movies{grid-template-columns:repeat(2,1fr);gap:8px}
+      .card .info{padding:8px}
+      .card .info h3{font-size:13px}
+      .closeBtn{padding:10px 14px}
+    }
+
+    button:focus, nav li:focus {outline:2px solid #06b6d4;outline-offset:3px}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <img src="https://od.lk/s/NzJfNDc2NjczNTdf/bos.png?random=1" alt="logo">
+      <h1>Turis Tv</h1>
+    </div>
+    <div>
+      <button class="hamburger" aria-expanded="false" aria-controls="sideMenu" onclick="toggleMenu()" title="Menu">☰</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <nav id="sideMenu" aria-hidden="true">
+      <ul>
+        <li tabindex="0" onclick="filterMovies('ulusal');toggleMenu()">Ulusal</li>
+        <li tabindex="0" onclick="filterMovies('haber');toggleMenu()">Haber</li>
+        <li tabindex="0" onclick="filterMovies('spor');toggleMenu()">Spor</li>
+        <li tabindex="0" onclick="filterMovies('belgesel');toggleMenu()">Belgesel</li>
+        <li tabindex="0" onclick="filterMovies('muzik');toggleMenu()">Muzik</li>
+        <li tabindex="0" onclick="filterMovies('film');toggleMenu()">Film</li>
+        <li tabindex="0" onclick="filterMovies('cocuk');toggleMenu()">Çocuk</li>
+        <li tabindex="0" onclick="filterMovies('dini');toggleMenu()">Dini</li>
+        <li tabindex="0" onclick="filterMovies('youtube');toggleMenu()">YouTube Playlist</li>
+        <li tabindex="0" onclick="filterMovies('all');toggleMenu()">Alles</li>
+      </ul>
+    </nav>
+
+    <main>
+      <div class="movies" id="movieGrid" aria-live="polite"></div>
+    </main>
+  </div>
+
+  <div class="player" id="player" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="media-wrap" id="playerContent"></div>
+    <button class="closeBtn" onclick="closePlayer()">Kapat ✖</button>
+  </div>
+
+  <!-- HLS.js -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <script>
+    /* ======= JE KAN HIER JE PLAYLIST BEHEREN (zoals in je originele file) =======
+       Ik heb je oorspronkelijke movie array als basis behouden — pas aan waar nodig.
+    */
+    const movies = [
+      { title:"🇹🇷 TRT 1", cover:"https://od.lk/s/NzJfNDc2NjczNTdf/bos.png?random=1", category:"ulusal", url:"https://tv-trt1.medya.trt.com.tr/master.m3u8" },
+      { title:"🇹🇷 ATV", cover:"https://od.lk/s/NzJfNDc2NjczNTdf/bos.png?random=1", category:"ulusal", url:"https://rnttwmjcin.turknet.ercdn.net/lcpmvefbyo/atv/atv.m3u8" },
+      { title:"CNN TÜRK ", cover:"https://od.lk/s/NzJfNDc2Nzg4ODlf/nbnrz.png", category:"youtube", url:"https://www.youtube.com/watch?v=6N8_r2uwLEc" },
+      /* ... vul aan met je volledige lijst ... */
+    ];
+
+    const grid = document.getElementById('movieGrid');
+    const player = document.getElementById('player');
+    const playerContent = document.getElementById('playerContent');
+    const sideMenu = document.getElementById('sideMenu');
+    const hamburger = document.querySelector('.hamburger');
+    let hls;
+
+    // eenvoudige mobile detect (voldoende voor dit doel)
+    function isMobile(){
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
+
+    function renderMovies(list){
+      grid.innerHTML='';
+      list.forEach(m=>{
+        const div=document.createElement('div');
+        div.className='card';
+        div.innerHTML=`
+          <img src="${m.cover}" alt="${m.title}">
+          <div class="info"><h3 title="${m.title}">${m.title}</h3></div>
+        `;
+        div.onclick=()=> openPlayer(m);
+        div.onkeydown = (e) => { if(e.key === 'Enter' || e.key === ' ') openPlayer(m) };
+        grid.appendChild(div);
+      });
+    }
+
+    function filterMovies(cat){
+      if(cat==='all') renderMovies(movies);
+      else renderMovies(movies.filter(m=>m.category===cat));
+    }
+
+    /* ======= openPlayer: als mobiel & niet-YouTube -> probeer VLC te openen ======= */
+    function openPlayer(movie){
+      // Als YouTube: altijd embedden in overlay (zoals eerder)
+      if(isYoutubeUrl(movie.url)){
+        openOverlay(movie);
+        return;
+      }
+
+      // Als mobiel: probeer VLC te openen via OS-specifieke URI's
+      if(isMobile()){
+        tryOpenInVlc(movie);
+      } else {
+        // desktop: gebruik ingebouwde overlay/video playback
+        openOverlay(movie);
+      }
+      // sluit menu op mobiel altijd
+      sideMenu.classList.remove('show');
+      hamburger.setAttribute('aria-expanded','false');
+    }
+
+    function openOverlay(movie){
+      // toon ingebouwde player overlay (HLS of youtube iframe)
+      player.style.display='flex';
+      player.setAttribute('aria-hidden','false');
+      playStream(movie.url);
+    }
+
+    function closePlayer(){
+      player.style.display='none';
+      player.setAttribute('aria-hidden','true');
+      if(hls){ try{ hls.destroy(); }catch(e){}; hls=null; }
+      playerContent.innerHTML = "";
+    }
+
+    function isYoutubeUrl(url){
+      return url.includes("youtube.com") || url.includes("youtu.be");
+    }
+
+    function playStream(url){
+      playerContent.innerHTML = "";
+
+      if(isYoutubeUrl(url)){
+        const videoId = extractYoutubeId(url);
+        const iframe = document.createElement('iframe');
+        iframe.setAttribute('src', `https://www.youtube.com/embed/${videoId}?autoplay=1`);
+        iframe.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
+        iframe.setAttribute('allowfullscreen', '');
+        playerContent.appendChild(iframe);
+      } else {
+        const video = document.createElement("video");
+        video.controls = true;
+        video.playsInline = true;
+        playerContent.appendChild(video);
+
+        if(hls){ try{ hls.destroy(); }catch(e){}; hls=null;}
+        if(video.canPlayType('application/vnd.apple.mpegurl')){
+          video.src=url;
+          video.play().catch(()=>{});
+        } else if(Hls.isSupported()){
+          hls = new Hls();
+          hls.loadSource(url);
+          hls.attachMedia(video);
+          hls.on(Hls.Events.MANIFEST_PARSED, ()=> video.play().catch(()=>{}));
+        } else {
+          alert("HLS wordt niet ondersteund in deze browser.");
+        }
+      }
+    }
+
+    function extractYoutubeId(url){
+      let id = "";
+      if(url.includes("youtube.com/watch?v=")){
+        id = url.split("v=")[1].split("&")[0];
+      } else if(url.includes("youtu.be/")){
+        id = url.split("youtu.be/")[1].split("?")[0];
+      } else {
+        const parts = url.split('/');
+        id = parts[parts.length-1].split('?')[0];
+      }
+      return id;
+    }
+
+    /* ======= openInVlc (mobile) =======
+       - Android: gebruik intent://...#Intent;package=org.videolan.vlc;end
+       - iOS: probeer vlc:// en vlc-x-callback://x-callback-url/stream?url=
+       - Fallback: als VLC niet opent (of app is niet geïnstalleerd) wordt na korte timeout de ingebouwde player geopend.
+       ===================================================== */
+    function tryOpenInVlc(movie){
+      const url = movie.url;
+      const ua = navigator.userAgent || '';
+      const now = Date.now();
+
+      if(/Android/i.test(ua)){
+        // Android: bouw intent URL
+        // intent://<host and path>#Intent;scheme=http;package=org.videolan.vlc;end
+        // we strip leading scheme for correct intent:// form
+        let stripped = url.replace(/^https?:\/\//i, '');
+        const intentUrl = 'intent://' + stripped + '#Intent;scheme=http;package=org.videolan.vlc;end';
+
+        // probeer intent openen
+        window.location = intentUrl;
+
+        // fallback: als binnen 1s VLC niet start -> open ingebouwde overlay
+        setTimeout(() => {
+          // heuristiek: sommige browsers blijven in page, dus fallback tonen
+          openOverlay(movie);
+          alert('VLC app niet gevonden of openen mislukt. De stream wordt in de ingebouwde speler geopend.');
+        }, 1200);
+
+      } else if(/iPhone|iPad|iPod/i.test(ua)){
+        // iOS: probeer vlc-x-callback eerste (nieuwere methode), daarna vlc://
+        const vc1 = 'vlc-x-callback://x-callback-url/stream?url=' + encodeURIComponent(url);
+        const vc2 = 'vlc://' + encodeURIComponent(url);
+
+        // eerste poging vlc-x-callback
+        window.location = vc1;
+
+        // fallback 1s -> probeer vlc://
+        setTimeout(() => {
+          window.location = vc2;
+        }, 600);
+
+        // fallback extra -> als geen app opent na 1.8s -> open ingebouwde overlay
+        setTimeout(() => {
+          openOverlay(movie);
+          alert('VLC app niet gevonden of openen mislukt op iOS. De stream wordt in de ingebouwde speler geopend.');
+        }, 1800);
+
+      } else {
+        // andere mobiele browsers (rare) -> open overlay
+        openOverlay(movie);
+      }
+    }
+
+    function toggleMenu(){
+      const isShown = sideMenu.classList.toggle("show");
+      sideMenu.setAttribute('aria-hidden', !isShown);
+      hamburger.setAttribute('aria-expanded', isShown);
+    }
+
+    // init
+    renderMovies(movies);
+  </script>
+</body>
+</html>
