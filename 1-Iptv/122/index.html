@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Turis TV - VLC Player</title>
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #0a0f1c;
+    color: #fff;
+}
+header {
+    background-color: #111827;
+    padding: 10px;
+    text-align: center;
+}
+header h1 {
+    margin: 0;
+    font-size: 24px;
+}
+nav {
+    display: flex;
+    justify-content: center;
+    background-color: #1e293b;
+}
+nav a {
+    padding: 12px 20px;
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+}
+nav a:hover {
+    background-color: #0ea5e9;
+}
+main {
+    padding: 20px;
+    text-align: center;
+}
+.video-container {
+    margin-bottom: 20px;
+}
+video {
+    width: 90%;
+    max-width: 700px;
+    border-radius: 10px;
+}
+.playlist {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+}
+.playlist-item {
+    cursor: pointer;
+    width: 120px;
+    text-align: center;
+}
+.playlist-item img {
+    width: 100%;
+    border-radius: 8px;
+}
+button.vlc-btn {
+    display: none;
+    padding: 12px 20px;
+    background: #06b6d4;
+    color: #000;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+button.vlc-btn:hover {
+    background: #0cdce9;
+}
+</style>
+</head>
+<body>
+
+<header>
+    <h1>Turis TV</h1>
+</header>
+
+<nav>
+    <a href="#">Home</a>
+    <a href="#">Live</a>
+    <a href="#">Favorieten</a>
+    <a href="#">Contact</a>
+</nav>
+
+<main>
+    <!-- VLC knop mobiel -->
+    <button class="vlc-btn" id="openVLC">Speel in VLC</button>
+
+    <!-- Desktop video player -->
+    <div class="video-container">
+        <video controls id="desktopPlayer" poster="poster.jpg">
+            <source src="http://media.finest.tv/hls/live.m3u8" type="application/x-mpegURL">
+            Jouw browser ondersteunt deze video niet.
+        </video>
+    </div>
+
+    <!-- Playlist -->
+    <div class="playlist" id="playlist">
+        <div class="playlist-item" data-url="http://media.finest.tv/hls/live.m3u8">
+            <img src="thumb1.jpg" alt="Kanaal 1">
+            <p>Kanaal 1</p>
+        </div>
+        <div class="playlist-item" data-url="http://media.finest.tv/hls/live2.m3u8">
+            <img src="thumb2.jpg" alt="Kanaal 2">
+            <p>Kanaal 2</p>
+        </div>
+        <div class="playlist-item" data-url="http://media.finest.tv/hls/live3.m3u8">
+            <img src="thumb3.jpg" alt="Kanaal 3">
+            <p>Kanaal 3</p>
+        </div>
+    </div>
+</main>
+
+<script>
+// Detecteer mobiel
+function isMobile() {
+    return /android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
+
+// Stream afspelen
+let currentStream = "http://media.finest.tv/hls/live.m3u8";
+
+// VLC openen op mobiel
+function openVLC(url) {
+    if (/android/i.test(navigator.userAgent)) {
+        const intentUrl = `intent://${url.replace(/^https?:\/\//,'')}#Intent;package=org.videolan.vlc;scheme=http;end`;
+        window.location.href = intentUrl;
+    } else if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+        const vlcUrl = `vlc://${url}`;
+        window.location.href = vlcUrl;
+    } else {
+        alert("VLC openen wordt alleen ondersteund op mobiel met VLC geïnstalleerd.");
+    }
+}
+
+// Playlist clicks
+document.querySelectorAll('.playlist-item').forEach(item => {
+    item.addEventListener('click', () => {
+        const url = item.getAttribute('data-url');
+        currentStream = url;
+
+        if (isMobile()) {
+            openVLC(url);
+        } else {
+            const player = document.getElementById('desktopPlayer');
+            player.src = url;
+            player.play();
+        }
+    });
+});
+
+// Toon VLC knop op mobiel
+if (isMobile()) {
+    document.getElementById('desktopPlayer').style.display = 'none';
+    const btn = document.getElementById('openVLC');
+    btn.style.display = 'inline-block';
+    btn.addEventListener('click', () => openVLC(currentStream));
+}
+</script>
+
+</body>
+</html>

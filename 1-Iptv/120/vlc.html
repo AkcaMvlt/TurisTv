@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Turis TV - VLC Player</title>
+<style>
+  body{margin:0;font-family:Arial,sans-serif;background:#0a0f1c;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;text-align:center;}
+  h1{margin-bottom:20px;}
+  .btn{padding:12px 20px;background:#06b6d4;color:#000;font-weight:bold;border:none;border-radius:10px;cursor:pointer;font-size:16px;}
+  .btn:hover{background:#0cdce9;}
+</style>
+</head>
+<body>
+<h1>Turis TV - Open Stream in VLC</h1>
+
+<!-- Voorbeeld stream -->
+<button class="btn" id="openVLC">Speel in VLC</button>
+
+<script>
+const streamUrl = "http://media.finest.tv/hls/live.m3u8"; // voorbeeld HLS
+
+document.getElementById('openVLC').addEventListener('click', ()=>{
+    const ua = navigator.userAgent || navigator.vendor;
+    if (/android/i.test(ua)) {
+        // Android intent
+        const intentUrl = `intent://${streamUrl.replace(/^https?:\/\//,'')}#Intent;package=org.videolan.vlc;scheme=http;end`;
+        window.location.href = intentUrl;
+    } else if (/iPad|iPhone|iPod/.test(ua) && !window.MSStream) {
+        // iOS vlc:// schema
+        const vlcUrl = `vlc://${streamUrl}`;
+        window.location.href = vlcUrl;
+    } else {
+        alert("VLC openen wordt alleen ondersteund op mobiel met VLC geïnstalleerd.");
+    }
+});
+</script>
+</body>
+</html>

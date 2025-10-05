@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Turis Tv</title>
+  <title>Turis TV</title>
 
   <link rel="icon" href="favicon.ico" sizes="32x32">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -30,7 +30,6 @@
     }
 
     .brand{display:flex;align-items:center;gap:10px;}
-    .brand img{width:40px;height:40px;border-radius:8px;object-fit:cover;flex:0 0 40px;}
     .brand h1{font-size:18px;margin:0}
 
     .hamburger{
@@ -107,15 +106,13 @@
       nav{position:fixed;top:64px;left:12px;right:12px;z-index:999;display:none;padding:12px}
       nav.show{display:block}
       .brand h1{font-size:16px}
-      .brand img{width:36px;height:36px}
       .movies{grid-template-columns:repeat(auto-fill, minmax(140px, 1fr))}
-      .card .info h3{font-size:8px}
+      .card .info h3{font-size:12px}
       .hamburger{font-size:13px;padding:2px}
     }
 
     @media (max-width:480px){
       header{padding:10px}
-      .brand img{width:32px;height:32px}
       .brand h1{font-size:15px}
       .card img{aspect-ratio: 4/3;}
       .movies{grid-template-columns:repeat(2,1fr);gap:8px}
@@ -168,7 +165,6 @@
       { title:"FiNEST TV", cover:"https://od.lk/s/NzJfNDc2NzIzNzBf/BosY.png?random=1", category:"muzik", url:"http://media.finest.tv/hls/live.m3u8" },
       { title:"TRT 1", cover:"https://od.lk/s/NzJfNDc2NjczNTdf/bos.png?random=1", category:"ulusal", url:"https://tv-trt1.medya.trt.com.tr/master.m3u8" },
       { title:"CNN TÜRK", cover:"https://od.lk/s/NzJfNDc2Nzg4ODlf/nbnrz.png", category:"youtube", url:"https://www.youtube.com/watch?v=6N8_r2uwLEc" }
-      // Voeg hier al je andere items toe zoals in jouw originele array
     ];
 
     const grid = document.getElementById('movieGrid');
@@ -212,14 +208,19 @@
         const video = document.createElement('video');
         video.controls = true;
         video.autoplay = true;
+        video.playsInline = true; // Belangrijk voor mobiel
+        video.muted = false;      // Kan op mobiel nodig zijn als autoplay
+        video.style.background = "#000";
         if(Hls.isSupported()){
           hls = new Hls();
           hls.loadSource(movie.url);
           hls.attachMedia(video);
+          video.addEventListener('click',()=>{ video.play(); });
         } else {
           video.src = movie.url;
         }
         playerContent.appendChild(video);
+        video.play().catch(()=>{}); // fallback voor mobiel
       }
       player.style.display='flex';
       player.setAttribute('aria-hidden','false');
@@ -239,7 +240,6 @@
       sideMenu.setAttribute('aria-hidden', expanded);
     }
 
-    // initial render
     filterMovies('all');
   </script>
 </body>

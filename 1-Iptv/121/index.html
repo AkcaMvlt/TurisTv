@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Turis TV - VLC Player</title>
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #0a0f1c;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+  }
+  h1 {
+    margin-bottom: 20px;
+  }
+  .btn {
+    padding: 12px 20px;
+    background: #06b6d4;
+    color: #000;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  .btn:hover {
+    background: #0cdce9;
+  }
+  video {
+    width: 90%;
+    max-width: 600px;
+    border-radius: 10px;
+    margin-top: 20px;
+  }
+</style>
+</head>
+<body>
+<h1>Turis TV</h1>
+
+<!-- VLC knop voor mobiel -->
+<button class="btn" id="openVLC">Speel in VLC</button>
+
+<!-- Desktop/video fallback -->
+<video controls id="desktopPlayer" poster="poster.jpg">
+    <source src="http://media.finest.tv/hls/live.m3u8" type="application/x-mpegURL">
+    Jouw browser ondersteunt deze video niet.
+</video>
+
+<script>
+const streamUrl = "http://media.finest.tv/hls/live.m3u8"; // je HLS stream
+
+function isMobile() {
+    return /android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
+
+document.getElementById('openVLC').addEventListener('click', () => {
+    if (/android/i.test(navigator.userAgent)) {
+        // Android intent
+        const intentUrl = `intent://${streamUrl.replace(/^https?:\/\//,'')}#Intent;package=org.videolan.vlc;scheme=http;end`;
+        window.location.href = intentUrl;
+    } else if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+        // iOS vlc:// schema
+        const vlcUrl = `vlc://${streamUrl}`;
+        window.location.href = vlcUrl;
+    } else {
+        alert("VLC openen wordt alleen ondersteund op mobiel met VLC geïnstalleerd.");
+    }
+});
+
+// Verberg desktop player op mobiel (optioneel)
+if (isMobile()) {
+    document.getElementById('desktopPlayer').style.display = 'none';
+}
+</script>
+</body>
+</html>
