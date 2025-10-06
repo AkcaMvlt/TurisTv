@@ -67,7 +67,7 @@
 <body>
   <header>
     <button class="hamburger" onclick="toggleMenu()">☰</button>
- 
+    <h1>Turis TV</h1>
   </header>
 
   <div class="container">
@@ -76,6 +76,7 @@
         <li onclick="filterMovies('ulusal');toggleMenu()">Ulusal</li>
         <li onclick="filterMovies('haber');toggleMenu()">Haber</li>
         <li onclick="filterMovies('spor');toggleMenu()">Spor</li>
+        <li onclick="filterMovies('belgesel');toggleMenu()">Belgesel</li>
         <li onclick="filterMovies('muzik');toggleMenu()">Muzik</li>
         <li onclick="filterMovies('film');toggleMenu()">Film</li>
         <li onclick="filterMovies('cocuk');toggleMenu()">Çocuk</li>
@@ -95,11 +96,9 @@
   </div>
 
   <script>
-    // voorbeeld playlist (vervang met jouw volledige lijst)
+    // 👉 gebruik hier je volledige playlist-array (heb je al in je versie staan)
     const movies = [
-
-
-        { title:"🇹🇷 TRT 1", cover:"https://od.lk/s/NzJfNDc2NjczNTdf/bos.png?random=1", category:"ulusal", url:"https://tv-trt1.medya.trt.com.tr/master.m3u8" },
+      { title:"🇹🇷 TRT 1", cover:"https://od.lk/s/NzJfNDc2NjczNTdf/bos.png?random=1", category:"ulusal", url:"https://tv-trt1.medya.trt.com.tr/master.m3u8" },
       { title:"🇹🇷 ATV", cover:"https://od.lk/s/NzJfNDc2NjczNTdf/bos.png?random=1", category:"ulusal", url:"https://rnttwmjcin.turknet.ercdn.net/lcpmvefbyo/atv/atv.m3u8" },
       { title:"🇹🇷 KANAL D", cover:"https://od.lk/s/NzJfNDc2NjczNTdf/bos.png?random=1", category:"ulusal", url:"https://ackaxsqacw.turknet.ercdn.net/ozfkfbbjba/kanald/kanald.m3u8" },
       { title:"🇹🇷 STAR TV", cover:"https://od.lk/s/NzJfNDc2NjczNTdf/bos.png?random=1", category:"ulusal", url:"https://emmazbvkkf.turknet.ercdn.net/cnifuowzza/startv/startv.m3u8" },
@@ -266,12 +265,15 @@
       { title:"Gangnam Style", cover:"https://od.lk/s/NzJfNDc2Nzg4ODlf/nbnrz.png", category:"youtube", url:"https://www.youtube.com/watch?v=JjTeViaVdoI" },
 
       { title:"Lorke Lorke", cover:"https://od.lk/s/NzJfNDc2Nzg4ODlf/nbnrz.png", category:"youtube", url:"https://www.youtube.com/watch?v=Mwu43X40PgE" }
+      // ... rest van jouw playlist
     ];
 
     const grid=document.getElementById('movieGrid');
     const player=document.getElementById('player');
     const playerContent=document.getElementById('playerContent');
     const sideMenu=document.getElementById('sideMenu');
+    let lastScroll = 0;
+    let playerOpen = false;
 
     function renderMovies(list){
       grid.innerHTML='';
@@ -290,6 +292,7 @@
     }
 
     function openPlayer(movie){
+      lastScroll = window.scrollY;
       player.style.display='flex';
       const src = "http://online.hdgo.site/player30/playerjs.html?file=" + encodeURIComponent(movie.url) + "&autoplay=1";
       const iframe = document.createElement("iframe");
@@ -300,10 +303,12 @@
       playerContent.innerHTML="";
       playerContent.appendChild(iframe);
 
-      // fullscreen automatisch als portrait
       if (window.matchMedia("(orientation: portrait)").matches) {
         requestFullScreen(iframe);
       }
+
+      history.pushState({player:true}, "");
+      playerOpen = true;
     }
 
     function requestFullScreen(el){
@@ -315,13 +320,32 @@
     function closePlayer(){
       player.style.display='none';
       playerContent.innerHTML='';
+      playerOpen = false;
+      window.scrollTo(0, lastScroll);
     }
 
     function toggleMenu(){
       sideMenu.classList.toggle('show');
     }
 
-    // init met alle films
+    // intercept back
+    window.addEventListener("popstate", function(e){
+      if(playerOpen){
+        closePlayer();
+      }
+    });
+
+    // detect exit fullscreen → sluit player meteen
+    ["fullscreenchange","webkitfullscreenchange","mozfullscreenchange","MSFullscreenChange"]
+      .forEach(evt=>{
+        document.addEventListener(evt, ()=>{
+          if(playerOpen && !document.fullscreenElement){
+            closePlayer();
+            history.back(); // ga ook history terug zodat back-knop goed blijft
+          }
+        });
+      });
+
     renderMovies(movies);
   </script>
 </body>
