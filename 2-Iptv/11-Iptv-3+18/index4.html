@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+<title>IPTV Mobile + Online Player</title>
+<style>
+:root{
+  --bg:#0f1724;
+  --card:#0b1220;
+  --accent:#06b6d4;
+  --muted:#94a3b8;
+}
+*{box-sizing:border-box;}
+html,body{
+  height:100%;
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial;
+  background:var(--bg);
+  color:#fff;
+}
+.app{max-width:1200px;margin:0 auto;padding:12px;}
+header{display:flex;gap:12px;align-items:center;margin-bottom:10px;}
+.logo{font-weight:700;font-size:18px;color:var(--accent);}
+.toggle-cat{cursor:pointer;color:#fff;font-size:24px;display:flex;align-items:center;gap:4px;order:-1;}
+.categories{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  padding:6px 0;
+  max-height:0;
+  overflow:hidden;
+  transition:max-height 0.3s ease;
+}
+.categories.show{max-height:300px;}
+.cat{
+  background:transparent;
+  border:none;
+  color:#fff;
+  padding:6px 10px;
+  cursor:pointer;
+  text-align:left;
+  font-size:14px;
+}
+.cat.active{color:var(--accent);}
+.player-wrap{
+  position:relative;
+  background:#000;
+  border-radius:10px;
+  overflow:hidden;
+  margin-bottom:10px;
+}
+iframe{
+  width:100%;
+  height:250px;
+  display:block;
+  background:#000;
+  border:none;
+  border-radius:8px;
+}
+.title{
+  position:absolute;
+  left:12px;
+  top:12px;
+  padding:4px 6px;
+  border-radius:8px;
+  background:rgba(0,0,0,0.5);
+  font-size:12px;
+}
+.adult-text{
+  padding:8px;
+  margin:6px 0;
+  background:#111;
+  color:#f00;
+  border-radius:6px;
+  font-size:12px;
+  text-align:center;
+  display:none;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:6px;
+  overflow-y:auto;
+  max-height:50vh;
+  padding-bottom:12px;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+.grid::-webkit-scrollbar{display:none;}
+.card{
+  background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  padding:4px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,0.03);
+  cursor:pointer;
+  text-align:center;
+}
+.card img{
+  width:100%;
+  height:70px;
+  object-fit:cover;
+  border-radius:6px;
+  margin-bottom:4px;
+}
+.card h4{margin:0;font-size:12px;}
+.card p{margin:2px 0 0;font-size:10px;color:var(--muted);}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="toggle-cat" id="toggleCat">▼</div>
+    <div class="logo">IPTV Mobile</div>
+  </header>
+
+  <div class="adult-text" id="adultText">⚠️ Alleen voor 18+ kanalen! Wees voorzichtig.</div>
+
+  <div class="categories" id="categories"></div>
+
+  <div class="player-wrap">
+    <div class="title" id="playerTitle">Kies een kanaal</div>
+    <iframe id="playerFrame" allow="autoplay; fullscreen" allowfullscreen></iframe>
+  </div>
+
+  <div class="grid" id="channels"></div>
+</div>
+
+<script>
+const ADULT_PASSWORD = "Turis+18";
+let adultAccess = false;
+
+const playlist = [
+  {title:'Finest IPTV',category:'Sport',logo:'https://picsum.photos/320/180?random=1',url:'http://media.finest.tv/hls/live.m3u8',type:'iptv'},
+  {title:'Finest 1',category:'Sport',logo:'https://picsum.photos/320/180?random=1',url:'http://media.finest.tv/hls/live.m3u8?start=LIVE&end=END',type:'iptv'},
+  {title:'Kral',category:'Sport',logo:'https://picsum.photos/320/180?random=1',url:'https://dogus-live.daioncdn.net/kralpoptv/kralpoptv_360p.m3u8',type:'iptv'},
+  {title:'trt',category:'Sport',logo:'https://picsum.photos/320/180?random=1',url:'https://tv-trtmuzik.medya.trt.com.tr/master_360.m3u8'},
+  {title:'Slow',category:'Sport',logo:'https://picsum.photos/320/180?random=1',url:'https://listen.powerapp.com.tr/pturkslow/slow.smil/playlist.m3u8'},
+
+  {title:'Film Kanaal',category:'Films',logo:'https://picsum.photos/320/180?random=2',url:'https://listen.powerapp.com.tr/pturkslow/slow.smil/playlist.m3u8',type:'iptv'},
+  {title:'YouTube Test',category:'YouTube',logo:'https://img.youtube.com/vi/dQw4w9WgXcQ/0.jpg',url:'https://www.youtube.com/embed/JjTeViaVdoI',type:'youtube'},
+  {title:'Volwassen +18',category:'+18',logo:'https://picsum.photos/320/180?random=3',url:'https://voorbeeld.com/adult.m3u8',type:'iptv'}
+];
+
+const categoriesEl = document.getElementById('categories');
+const channelsEl = document.getElementById('channels');
+const playerFrame = document.getElementById('playerFrame');
+const playerTitle = document.getElementById('playerTitle');
+const adultText = document.getElementById('adultText');
+const toggleCatBtn = document.getElementById('toggleCat');
+
+const cats = ['Alle', ...new Set(playlist.map(p=>p.category))];
+
+// Categorieën renderen
+function renderCategories(){
+  categoriesEl.innerHTML='';
+  cats.forEach(c=>{
+    const b=document.createElement('button');
+    b.className='cat';
+    b.textContent=c;
+    b.onclick=()=>{handleCategory(c); hideCategories();};
+    categoriesEl.appendChild(b);
+  });
+  setActiveCat('Alle');
+}
+
+// Verberg categorieën na klik
+function hideCategories(){
+  categoriesEl.classList.remove('show');
+  toggleCatBtn.textContent="▼";
+}
+
+// Behandeling van +18
+function handleCategory(cat){
+  if(cat==='+18' && !adultAccess){
+    const pwd = prompt("Voer het wachtwoord in voor +18 kanalen:");
+    if(pwd===ADULT_PASSWORD){
+      adultAccess = true;
+      showAdultText();
+      setActiveCat(cat);
+    } else {
+      alert("Onjuist wachtwoord!");
+      setActiveCat('Alle');
+    }
+  } else if(cat==='+18' && adultAccess){
+    showAdultText();
+    setActiveCat(cat);
+  } else {
+    adultText.style.display='none';
+    setActiveCat(cat);
+  }
+}
+
+// Toon waarschuwing tijdelijk
+function showAdultText(){
+  adultText.style.display='block';
+  setTimeout(()=>adultText.style.display='none',8000);
+}
+
+// Categorie actief maken
+function setActiveCat(cat){
+  document.querySelectorAll('.cat').forEach(n=>n.classList.remove('active'));
+  Array.from(document.querySelectorAll('.cat')).find(n=>n.textContent===cat)?.classList.add('active');
+  renderChannels(cat);
+}
+
+// Kanalen renderen
+function renderChannels(filterCat){
+  channelsEl.innerHTML='';
+  playlist.filter(p=>filterCat==='Alle' || p.category===filterCat).forEach(item=>{
+    const c=document.createElement('div');
+    c.className='card';
+    c.innerHTML=`<img src="${item.logo}"><h4>${item.title}</h4><p>${item.category}</p>`;
+    c.onclick=()=>playChannel(item);
+    channelsEl.appendChild(c);
+  });
+}
+
+// Kanaal afspelen
+function playChannel(channel){
+  playerTitle.textContent = channel.title;
+  if(channel.type==='iptv'){
+    playerFrame.src = "http://online.hdgo.site/player30/playerjs.html?file="+encodeURIComponent(channel.url)+"&autoplay=1&muted=0";
+  } else if(channel.type==='youtube'){
+    playerFrame.src = channel.url+"?autoplay=1&playsinline=1&mute=0";
+  }
+}
+
+// Toggle categorie-menu
+toggleCatBtn.addEventListener('click', ()=>{
+  categoriesEl.classList.toggle('show');
+  toggleCatBtn.textContent = categoriesEl.classList.contains('show') ? "▲" : "▼";
+});
+
+// Fullscreen bij verticale modus
+window.addEventListener('orientationchange', ()=>{
+  if(window.innerHeight > window.innerWidth && playerFrame.src){
+    playerFrame.requestFullscreen?.().catch(()=>{});
+  }
+});
+
+renderCategories();
+</script>
+</body>
+</html>
