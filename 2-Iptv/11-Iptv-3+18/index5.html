@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>TurisTV Player</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+  <style>
+    :root {
+      --bg-dark: #000;
+      --bg-menu: #0d0d0d;
+      --accent: #00bcd4;
+      --text: #fff;
+    }
+
+    body {
+      background: var(--bg-dark);
+      color: var(--text);
+      margin: 0;
+      font-family: "Work Sans", sans-serif;
+      overflow: hidden;
+    }
+
+    /* Navbar bovenaan */
+    .navbar {
+      background: #0a0a0a;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 14px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 10000;
+      height: 44px;
+    }
+
+    .menu-btn {
+      border: none;
+      background: transparent;
+      color: #fff;
+      font-size: 1.5rem;
+    }
+
+    .navbar-title {
+      font-weight: 700;
+      color: var(--accent);
+      font-size: 1.1rem;
+    }
+
+    /* Beide slide-out menus */
+    .side-menu {
+      position: fixed;
+      top: 0;
+      width: 75%;
+      height: 100%;
+      background: var(--bg-menu);
+      box-shadow: 4px 0 15px rgba(0,0,0,0.7);
+      transition: transform 0.3s ease;
+      z-index: 9999;
+      padding-top: 60px;
+    }
+
+    #catMenu {
+      left: 0;
+      transform: translateX(-100%);
+    }
+    #catMenu.active {
+      transform: translateX(0);
+    }
+
+    #mainMenu {
+      right: 0;
+      transform: translateX(100%);
+    }
+    #mainMenu.active {
+      transform: translateX(0);
+    }
+
+    .category-item, .menu-item {
+      display: block;
+      padding: 14px 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      font-size: 1.05rem;
+      cursor: pointer;
+      color: #fff;
+      transition: background 0.2s;
+    }
+
+    .category-item:hover, .menu-item:hover {
+      background: var(--accent);
+      color: #000;
+    }
+
+    /* Overlay (achter menu) */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s;
+      z-index: 9000;
+    }
+
+    .overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    iframe {
+      width: 100%;
+      height: 48vh; /* iets hoger geplaatst */
+      border: none;
+      background: #000;
+      margin-top: 44px; /* direct onder navbar */
+      display: block;
+    }
+
+    .playlist {
+      height: calc(52vh - 44px);
+      overflow-y: auto;
+      background: #111;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .playlist-item {
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      cursor: pointer;
+    }
+
+    .playlist-item:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    .playlist-item.active {
+      background: rgba(0,188,212,0.3);
+    }
+
+    @media (orientation: landscape) {
+      body, html {
+        background: #000 !important;
+      }
+      .navbar, .playlist, .side-menu, .overlay {
+        display: none !important;
+      }
+      iframe {
+        height: 100vh !important;
+        margin-top: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <button class="menu-btn" id="catToggle">
+      <i class="fa fa-th-list"></i>
+    </button>
+    <span class="navbar-title">Turis<span style="color:#fff">TV</span></span>
+    <button class="menu-btn" id="mainToggle">
+      <i class="fa fa-bars"></i>
+    </button>
+  </nav>
+
+  <!-- Categorie Menu -->
+  <div class="side-menu" id="catMenu">
+    <div class="category-item" onclick="selectCategory('muzik')">🎧 Müzik</div>
+    <div class="category-item" onclick="selectCategory('spor')">⚽ Spor</div>
+    <div class="category-item" onclick="selectCategory('film')">🎬 Filmler</div>
+    <div class="category-item" onclick="selectCategory('dini')">🕌 Dini</div>
+    <div class="category-item" onclick="selectCategory('radyo')">📻 Radyolar</div>
+  </div>
+
+  <!-- Rechter (Hamburger) Menu -->
+  <div class="side-menu" id="mainMenu">
+    <div class="menu-item">⚙️ Ayarlar (later)</div>
+    <div class="menu-item">⭐ Favoriler (later)</div>
+    <div class="menu-item">📁 Hakkında (later)</div>
+  </div>
+
+  <div class="overlay" id="overlay" onclick="closeMenus()"></div>
+
+  <!-- Player -->
+  <iframe id="playerFrame" allowfullscreen allow="autoplay; fullscreen; encrypted-media"></iframe>
+
+  <!-- Playlist -->
+  <div class="playlist" id="playlistContainer"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    const playerFrame = document.getElementById("playerFrame");
+    const playlistContainer = document.getElementById("playlistContainer");
+    const catMenu = document.getElementById("catMenu");
+    const mainMenu = document.getElementById("mainMenu");
+    const overlay = document.getElementById("overlay");
+
+    const playlist = [
+      { title: "🎧 Kral Pop TV", file: "https://dogus-live.daioncdn.net/kralpoptv/kralpoptv_360p.m3u8", cat: "muzik" },
+      { title: "🎶 TRT Müzik", file: "https://tv-trtmuzik.medya.trt.com.tr/master_360.m3u8", cat: "muzik" },
+      { title: "💖 Power Türk Slow", file: "https://listen.powerapp.com.tr/pturkslow/slow.smil/playlist.m3u8", cat: "muzik" },
+      { title: "⚽ TRT Spor", file: "https://tv-trtspor1.medya.trt.com.tr/master_360.m3u8", cat: "spor" },
+      { title: "🎬 Film Kanalı", file: "https://example.com/film.m3u8", cat: "film" }
+    ];
+
+    let currentCategory = "muzik";
+
+    function openMenu(menu) {
+      closeMenus();
+      menu.classList.add("active");
+      overlay.classList.add("active");
+    }
+
+    function closeMenus() {
+      catMenu.classList.remove("active");
+      mainMenu.classList.remove("active");
+      overlay.classList.remove("active");
+    }
+
+    document.getElementById("catToggle").addEventListener("click", () => openMenu(catMenu));
+    document.getElementById("mainToggle").addEventListener("click", () => openMenu(mainMenu));
+
+    function selectCategory(cat) {
+      currentCategory = cat;
+      renderPlaylist();
+      closeMenus();
+    }
+
+    function renderPlaylist() {
+      playlistContainer.innerHTML = "";
+      playlist
+        .filter(item => item.cat === currentCategory)
+        .forEach(item => {
+          const div = document.createElement("div");
+          div.className = "playlist-item";
+          div.textContent = item.title;
+          div.onclick = () => loadVideo(item);
+          playlistContainer.appendChild(div);
+        });
+    }
+
+    function loadVideo(item) {
+      const url = "http://online.hdgo.site/player30/playerjs.html?autoplay=1&file=" + encodeURIComponent(item.file);
+      playerFrame.src = url;
+
+      document.querySelectorAll(".playlist-item").forEach(el => {
+        el.classList.toggle("active", el.textContent === item.title);
+      });
+
+      requestFullScreen(playerFrame);
+    }
+
+    function requestFullScreen(element) {
+      if (element.requestFullscreen) element.requestFullscreen();
+      else if (element.webkitRequestFullscreen) element.webkitRequestFullscreen();
+      else if (element.msRequestFullscreen) element.msRequestFullscreen();
+    }
+
+    window.addEventListener("orientationchange", () => {
+      if (screen.orientation.angle === 0) requestFullScreen(playerFrame);
+    });
+
+    renderPlaylist();
+    loadVideo(playlist[0]);
+  </script>
+</body>
+</html>
