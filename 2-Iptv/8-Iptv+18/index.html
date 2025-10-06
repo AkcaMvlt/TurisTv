@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+<title>Mobiele IPTV Player</title>
+<style>
+:root{--bg:#0f1724;--card:#0b1220;--accent:#06b6d4;--muted:#94a3b8;}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial;background:var(--bg);color:#fff;scroll-behavior:smooth;}
+.app{max-width:1200px;margin:0 auto;padding:12px}
+header{display:flex;gap:12px;align-items:center;margin-bottom:10px}
+.logo{font-weight:700;font-size:18px;color:var(--accent)}
+.toggle-cat{cursor:pointer;color:#fff;font-size:18px;display:flex;align-items:center;gap:4px;order:-1;}
+.categories{display:flex;flex-direction:column;gap:8px;padding:6px 0;max-height:0;overflow:hidden;transition:max-height 0.3s ease;}
+.categories.show{max-height:300px;}
+.cat{background:transparent;border:none;color:#fff;padding:6px 10px;cursor:pointer;text-align:left;font-size:14px;}
+.cat.active{color:var(--accent);}
+.player-wrap{position:relative;background:#000;border-radius:10px;overflow:hidden;margin-bottom:10px}
+video, iframe{width:100%;height:240px;display:block;background:#000;border:none}
+.controls-overlay{position:absolute;left:12px;bottom:12px;display:flex;gap:8px;align-items:center}
+.playbtn{background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.06);padding:8px;border-radius:8px;cursor:pointer}
+.title{position:absolute;left:12px;top:12px;padding:4px 6px;border-radius:8px;background:rgba(0,0,0,0.5);font-size:12px}
+.adult-text{padding:8px;margin:6px 0;background:#111;color:#f00;border-radius:6px;font-size:12px;text-align:center;display:none;}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;overflow-y:auto;max-height:50vh;padding-bottom:12px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.grid::-webkit-scrollbar{display:none;}
+.card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:4px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);cursor:pointer;text-align:center}
+.card img{width:100%;height:70px;object-fit:cover;border-radius:6px;margin-bottom:4px}
+.card h4{margin:0;font-size:12px}
+.card p{margin:2px 0 0;font-size:10px;color:var(--muted)}
+@media(min-width:900px){.app{padding:20px}video, iframe{height:420px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="toggle-cat" id="toggleCat">▼</div>
+    <div class="logo">IPTV Mobile</div>
+  </header>
+
+  <div class="adult-text" id="adultText">⚠️ Alleen voor 18+ kanalen! Wees voorzichtig.</div>
+
+  <div class="categories" id="categories"></div>
+
+  <div class="player-wrap" id="playerWrap">
+    <div class="title" id="playerTitle">Kies een kanaal</div>
+    <video id="player" playsinline webkit-playsinline preload="auto" controls></video>
+    <iframe id="youtubePlayer" style="display:none;" allow="autoplay; fullscreen"></iframe>
+    <div class="controls-overlay">
+      <button class="playbtn" id="toggleMute">Mute</button>
+      <button class="playbtn" id="openFull">Volledig scherm</button>
+    </div>
+  </div>
+
+  <div class="grid" id="channels"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.0/dist/hls.min.js"></script>
+<script>
+const ADULT_PASSWORD = "mijn18plus";
+let adultAccess = false;
+
+const playlist = [
+
+
+  {id:1,title:'Finest',category:'Sport',logo:'https://picsum.photos/320/180?random=1',url:'http://media.finest.tv/hls/live.m3u8?start=LIVE&end=END',type:'iptv'},
+  {id:1,title:'Sport Kanaal 1',category:'Sport',logo:'https://picsum.photos/320/180?random=1',url:'https://dogus-live.daioncdn.net/kralpoptv/kralpoptv_360p.m3u8',type:'iptv'},
+  {id:2,title:'Muziek Live',category:'Muziek',logo:'https://picsum.photos/320/180?random=2',url:'https://tv-trtmuzik.medya.trt.com.tr/master_360.m3u8',type:'iptv'},
+  {id:3,title:'Film Channel',category:'Films',logo:'https://picsum.photos/320/180?random=3',url:'https://listen.powerapp.com.tr/pturkslow/slow.smil/playlist.m3u8',type:'iptv'},
+  {id:4,title:'Algemeen 24/7',category:'Algemeen',logo:'https://picsum.photos/320/180?random=4',url:'https://listen.powerapp.com.tr/pturktaptaze/taptaze.smil/playlist.m3u8',type:'iptv'},
+  {id:5,title:'Volwassen +18',category:'+18',logo:'https://picsum.photos/320/180?random=5',url:'https://voorbeeld.com/adult.m3u8',type:'iptv'},
+  {id:6,title:'YouTube Demo',category:'YouTube',logo:'https://img.youtube.com/vi/dQw4w9WgXcQ/0.jpg',url:'https://www.youtube.com/embed/dQw4w9WgXcQ',type:'youtube'}
+];
+
+const categoriesEl = document.getElementById('categories');
+const toggleCatBtn = document.getElementById('toggleCat');
+const channelsEl = document.getElementById('channels');
+const player = document.getElementById('player');
+const youtubePlayer = document.getElementById('youtubePlayer');
+const playerTitle = document.getElementById('playerTitle');
+const adultText = document.getElementById('adultText');
+let hls = null;
+let lastScroll = 0;
+
+const cats = [...new Set(playlist.map(p=>p.category))];
+
+function renderCategories(){
+  categoriesEl.innerHTML='';
+  const all = document.createElement('button'); 
+  all.className='cat active'; 
+  all.textContent='Alle'; 
+  all.onclick=()=>{setActiveCat(null); categoriesEl.classList.remove('show'); stopYoutube(); adultText.style.display='none';};
+  categoriesEl.appendChild(all);
+
+  cats.forEach(c=>{
+    const b=document.createElement('button');
+    b.className='cat';
+    b.textContent=c;
+    b.onclick=()=>{handleCategory(c); categoriesEl.classList.remove('show');};
+    categoriesEl.appendChild(b);
+  });
+}
+
+function handleCategory(cat){
+  if(cat === "+18" && !adultAccess){
+    let pwd = prompt("Voer het wachtwoord in voor +18 kanalen:");
+    if(pwd === ADULT_PASSWORD){
+      adultAccess = true;
+      showAdultText();
+      setActiveCat(cat);
+    } else {
+      alert("Onjuist wachtwoord!");
+      setActiveCat(null);
+    }
+  } else if(cat === "+18" && adultAccess){
+    showAdultText();
+    setActiveCat(cat);
+  } else {
+    adultText.style.display='none';
+    setActiveCat(cat);
+  }
+}
+
+function showAdultText(){
+  adultText.style.display='block';
+  setTimeout(()=>{ adultText.style.display='none'; }, 10000);
+}
+
+function setActiveCat(cat){
+  document.querySelectorAll('.cat').forEach(n=>n.classList.remove('active'));
+  if(cat===null){document.querySelector('.cat').classList.add('active');}
+  else{Array.from(document.querySelectorAll('.cat')).find(n=>n.textContent===cat).classList.add('active');}
+  renderChannels(cat);
+}
+
+function renderChannels(filterCat){
+  channelsEl.innerHTML='';
+  const items = playlist.filter(p=>!filterCat || p.category===filterCat);
+  items.forEach(item=>{
+    const c = document.createElement('div');c.className='card';
+    c.innerHTML = `<img src="${item.logo}" alt="${item.title}"><h4>${item.title}</h4><p>${item.category}</p>`;
+    c.onclick = ()=>playChannel(item);
+    channelsEl.appendChild(c);
+  });
+  channelsEl.scrollTop = lastScroll;
+}
+
+function destroyHls(){
+  if(hls){hls.destroy(); hls=null;}
+  try{player.src='';}catch(e){}
+  youtubePlayer.style.display='none';
+  youtubePlayer.src='';
+  player.style.display='block';
+}
+
+function stopYoutube(){
+  youtubePlayer.style.display='none';
+  youtubePlayer.src='';
+}
+
+async function playChannel(channel){
+  playerTitle.textContent = channel.title;
+  lastScroll = channelsEl.scrollTop;
+  destroyHls();
+
+  if(channel.type==='iptv'){
+    if(player.canPlayType('application/vnd.apple.mpegurl')){
+      player.src = channel.url;
+      try{ await player.play();}catch(e){}
+    } else if(Hls.isSupported()){
+      hls = new Hls({enableWorker:true});
+      hls.loadSource(channel.url);
+      hls.attachMedia(player);
+      hls.on(Hls.Events.MANIFEST_PARSED, ()=>{player.play().catch(()=>{});});
+    } else {
+      player.src = channel.url;
+      try{ await player.play();}catch(e){}
+    }
+    player.muted=false;
+  } else if(channel.type==='youtube'){
+    player.style.display='none';
+    youtubePlayer.src = channel.url + "?autoplay=1&playsinline=1";
+    youtubePlayer.style.display='block';
+    if(window.innerHeight > window.innerWidth){
+      requestFullscreen(youtubePlayer).catch(()=>{});
+    }
+  }
+}
+
+async function requestFullscreen(el){
+  try{
+    if(el.requestFullscreen) await el.requestFullscreen();
+    else if(el.webkitEnterFullscreen) el.webkitEnterFullscreen();
+    else if(el.webkitRequestFullscreen) await el.webkitRequestFullscreen();
+  }catch(e){console.warn('Fullscreen niet toegestaan:',e);}
+}
+
+toggleCatBtn.addEventListener('click', ()=>{categoriesEl.classList.toggle('show');});
+document.getElementById('toggleMute').addEventListener('click', ()=>{
+  player.muted = !player.muted;
+  document.getElementById('toggleMute').textContent = player.muted ? 'Mute':'Unmute';
+  if(!player.muted) player.play().catch(()=>{});
+});
+document.getElementById('openFull').addEventListener('click', ()=>{requestFullscreen(player);});
+
+window.addEventListener('orientationchange', ()=>{
+  setTimeout(()=>{
+    if(window.innerHeight > window.innerWidth && youtubePlayer.style.display==='block'){
+      requestFullscreen(youtubePlayer).catch(()=>{});
+    }
+  },300);
+});
+
+renderCategories(); setActiveCat(null);
+</script>
+</body>
+</html>
